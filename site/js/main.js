@@ -42,3 +42,14 @@ document.addEventListener("click", event => {
 });
 
 compactNavigation.addEventListener("change", () => closeNavigation());
+
+// デスクトップ（1181px 以上）では .hero-copy を視覚的に隠しているため、
+// その中の電話リンクに Tab でフォーカスが当たらないようにする（2026-11）
+const heroTelLink = document.querySelector(".hero-tel-link");
+function syncHeroTelFocus() {
+  if (!heroTelLink) return;
+  if (compactNavigation.matches) heroTelLink.removeAttribute("tabindex");
+  else heroTelLink.setAttribute("tabindex", "-1");
+}
+syncHeroTelFocus();
+compactNavigation.addEventListener("change", syncHeroTelFocus);

@@ -426,11 +426,11 @@ address { font-style: normal; }
 /* =========================================================
    トップのメインビジュアル下の見出し（タブレット・スマホだけ。2026-11）
    ・デスクトップ（1181px 以上）は画像の焼き込み文字を見せ、HTML の見出しは読み上げ用に隠しているため、見た目は変えない
-   ・「sato clinic」はデスクトップでは非表示（読み上げも「佐藤医院」のまま）
+   ・「Sato Clinic」はデスクトップでは非表示（読み上げも「佐藤医院」のまま）
    ========================================================= */
 .hero-clinic-en { display: none; }
 @media (max-width: 73.75rem) {
-  /* 病院名：「佐藤医院」を隠し「sato clinic」を表示（文字サイズ・太さ・色・余白は .hero-clinic のまま） */
+  /* 病院名：「佐藤医院」を隠し「Sato Clinic」を表示（文字サイズ・太さ・色・余白は .hero-clinic のまま） */
   .hero-clinic-ja { display: none; }
   .hero-clinic-en { display: inline; }
   /* 見出し：約5px大きく（33〜45px）・黒。ページ内で一番大きな文字にする */
@@ -448,4 +448,156 @@ address { font-style: normal; }
 }
 @media (max-width: 53.75rem) {
   .message-panel { background: linear-gradient(180deg, #f4f5f4, #fff); }
+}
+
+/* ==========================================================================
+   タブレット・スマホのファーストビュー改修（2026-11）
+   対象：1180px（73.75rem）以下のみ。デスクトップ版（1181px 以上）は変更しない。
+   ========================================================================== */
+:root {
+  --icon-phone: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3 3 5c-1 6 10 17 16 16l2-2-5-5-3 2-5-5 2-3Z'/%3E%3C/svg%3E");
+  --icon-phone-white: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 3 3 5c-1 6 10 17 16 16l2-2-5-5-3 2-5-5 2-3Z'/%3E%3C/svg%3E");
+  --icon-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 5 7 7-7 7'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 73.75rem) {
+  /* 1. メニューボタン：枠線をやめ、薄い緑の角丸にアイコンと文字を縦に並べる */
+  .js .nav-toggle { flex-direction: column; gap: .1875rem; width: 3.5rem; min-height: 3.25rem; padding: .375rem .25rem; border: 0; border-radius: .875rem; background: var(--color-surface); font-size: .6875rem; font-weight: 700; letter-spacing: .04em; line-height: 1; }
+  .nav-toggle svg { width: 1.5rem; height: 1.5rem; }
+
+  /* 2. ヘッダーの電話ボタンに受話器アイコンを付ける */
+  .header-tel::before { content: ""; width: 1.125rem; height: 1.125rem; flex: none; background: currentColor; -webkit-mask: var(--icon-phone) center / contain no-repeat; mask: var(--icon-phone) center / contain no-repeat; }
+
+  /* 3. 見出しまわり：余白と行間を詰める */
+  .hero-copy { padding-block: 1.25rem 1.5rem; }
+  .hero-clinic { display: flex; align-items: center; gap: .625rem; font-family: var(--font-english); letter-spacing: .18em; line-height: 1.4; }
+  .hero-clinic::before { content: ""; width: 1.75rem; height: 2px; border-radius: 1px; background: var(--color-brand); }
+  .hero-copy h1 { margin-top: 0; line-height: 1.25; }
+
+  /* 4. 電話番号・休診日・最寄駅：薄い緑の角丸カード */
+  .hero-facts { display: grid; gap: 0; margin-top: .75rem; padding: .75rem .75rem .125rem; border-radius: .875rem; background: var(--color-surface); font-size: 1rem; line-height: 1.5; }
+  .hero-facts > div { display: grid; grid-template-columns: 4.75em minmax(0, 1fr); align-items: baseline; gap: .5rem; padding: .5625rem .25rem; }
+  .hero-facts > div + div { border-top: 1px solid #cfe3d6; }
+  .hero-facts dt { font-size: .8125rem; letter-spacing: .06em; color: var(--color-heading); }
+  .hero-facts dd { margin: 0; font-weight: 700; color: var(--color-text); }
+
+  /* 5. 電話番号の行：押せるとわかる白い行（行全体が電話リンク） */
+  .hero-facts > .hero-fact-tel { position: relative; grid-template-columns: 2.75rem minmax(0, 1fr) 1.25rem; grid-template-rows: auto auto; column-gap: .75rem; row-gap: 0; align-items: center; padding: .625rem .75rem; border: 1px solid #b9dcc5; border-radius: .75rem; background: #fff; box-shadow: 0 2px 8px rgb(8 96 47 / 10%); }
+  .hero-fact-tel::before { content: ""; grid-column: 1; grid-row: 1 / span 2; width: 2.75rem; height: 2.75rem; border-radius: 50%; background: #0b7a3e var(--icon-phone-white) center / 1.25rem no-repeat; }
+  .hero-fact-tel::after { content: ""; grid-column: 3; grid-row: 1 / span 2; width: 1.25rem; height: 1.25rem; background: var(--color-brand); -webkit-mask: var(--icon-chevron) center / contain no-repeat; mask: var(--icon-chevron) center / contain no-repeat; }
+  .hero-fact-tel dt { grid-column: 2; grid-row: 1; font-size: .75rem; line-height: 1.4; }
+  .hero-fact-tel dd { grid-column: 2; grid-row: 2; line-height: 1.3; }
+  .hero-tel-link { display: flex; flex-wrap: wrap; align-items: baseline; gap: .125rem .625rem; color: var(--color-heading); text-decoration: none; }
+  .hero-tel-link::after { content: ""; position: absolute; inset: 0; border-radius: .75rem; } /* 行全体を押せる範囲にする */
+  .hero-tel-link:focus-visible { outline: none; }
+  .hero-fact-tel:has(.hero-tel-link:focus-visible) { outline: 3px solid var(--color-heading); outline-offset: 2px; }
+  .hero-fact-tel:active { background: var(--color-surface); }
+  .hero-tel-number { font-size: 1.375rem; font-weight: 700; letter-spacing: .02em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .hero-tel-hint { font-size: .75rem; font-weight: 700; color: var(--color-muted); }
+  .hero-facts > .hero-fact-tel + div { border-top: 0; }
+}
+
+/* タブレット（601〜1180px）：見出しを左、カードを右に並べる */
+@media (min-width: 37.5625rem) and (max-width: 73.75rem) {
+  .hero-copy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); column-gap: 2rem; align-items: center; }
+  .hero-clinic { grid-column: 1; grid-row: 1; align-self: end; }
+  .hero-copy h1 { grid-column: 1; grid-row: 2; align-self: start; }
+  .hero-facts { grid-column: 2; grid-row: 1 / span 2; margin-top: 0; }
+}
+
+/* スマホ（600px 以下）：電話・予約ボタンを画面の下に固定する */
+@media (max-width: 37.5rem) {
+  html { scroll-padding-block-end: 5rem; }
+  body { padding-bottom: calc(4.25rem + env(safe-area-inset-bottom)); }
+  .site-header { padding-block: .5rem; }
+  .header-actions { position: fixed; inset: auto 0 0 0; z-index: 10; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: .5rem; padding: .5rem .75rem calc(.5rem + env(safe-area-inset-bottom)); border-top: 1px solid var(--color-line); background: rgb(255 255 255 / 94%); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); box-shadow: 0 -6px 20px rgb(8 96 47 / 10%); }
+  .header-actions .button { padding-inline: .75rem; white-space: nowrap; }
+}
+
+/* 360px 未満：固定バーと電話番号の行を1行に収める */
+@media (max-width: 22.4375rem) {
+  .header-actions { gap: .375rem; padding-inline: .5rem; }
+  .header-actions .button { gap: .375rem; padding-inline: .5rem; }
+  .header-actions .header-tel { font-size: 1rem; letter-spacing: 0; }
+  .header-actions .header-reservation { font-size: .875rem; }
+  .hero-facts > .hero-fact-tel { grid-template-columns: 2.5rem minmax(0, 1fr) 1rem; column-gap: .5rem; padding-inline: .625rem; }
+  .hero-fact-tel::before { width: 2.5rem; height: 2.5rem; }
+  .hero-fact-tel::after { width: 1rem; height: 1rem; }
+  .hero-tel-number { font-size: 1.1875rem; letter-spacing: 0; }
+}
+
+@media print { .header-actions { position: static; } }
+
+/* 電話番号の行：右端の「＞」（mask を使うため手前に描かれる）の上も押せるよう、押せる範囲を前面に出す（2026-11） */
+@media (max-width: 73.75rem) {
+  .hero-tel-link::after { z-index: 1; inset: -1px; } /* -1px：行の枠線（1px）の上も押せる範囲に含める */
+}
+
+/* ファーストビュー改修の調整（2026-11）
+   1. タブレットの横並び：見出しをカードの上端にそろえ、写真との間を広げない
+   2. 横並びは 768px 以上だけ。601〜767px は見出しが3行に折り返すため、スマホと同じ縦並びにする
+   3. スマホ：文字を入力している間は固定バーを隠し、入力欄に重ならないようにする */
+@media (min-width: 37.5625rem) and (max-width: 73.75rem) {
+  .hero-copy { grid-template-rows: auto 1fr; align-items: start; }
+  .hero-clinic { align-self: start; }
+}
+@media (min-width: 37.5625rem) and (max-width: 47.9375rem) {
+  .hero-copy { display: block; }
+  .hero-facts { margin-top: .75rem; }
+}
+@media (max-width: 37.5rem) {
+  body:has(:is(input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"], [type="reset"], [type="hidden"]), textarea, select):focus) .header-actions { display: none; }
+}
+
+/* 見出しの下の英語コピー「Care rooted in our community」（タブレット・スマホだけ。2026-11）
+   デスクトップ版は画像に焼き込む予定のため、画像を差し替えるまでは読み上げも含めて隠す */
+.hero-tagline { display: none; }
+@media (max-width: 73.75rem) {
+  .hero-tagline { display: block; margin-top: .25rem; color: var(--color-heading); font: 700 .9375rem/1.5 var(--font-english); letter-spacing: .06em; }
+}
+@media (min-width: 48rem) and (max-width: 73.75rem) {
+  .hero-copy { grid-template-rows: auto auto 1fr; }
+  .hero-tagline { grid-column: 1; grid-row: 3; align-self: start; }
+  .hero-facts { grid-row: 1 / span 3; }
+}
+
+/* 英語コピー：見出しに近づけ、見出しの右端にそろえて右寄せ */
+@media (max-width: 73.75rem) {
+  .hero-heading { width: fit-content; max-width: 100%; } /* 囲みの幅を見出しの幅に合わせる */
+  .hero-tagline { margin-top: -.125rem; line-height: 1.3; text-align: right; }
+}
+/* 見出しとカードの横並び（768〜1180px）：囲みを左、カードを右に置く */
+@media (min-width: 48rem) and (max-width: 73.75rem) {
+  .hero-copy { grid-template-rows: auto; }
+  .hero-heading { grid-column: 1; grid-row: 1; }
+  .hero-facts { grid-row: 1; }
+}
+/* 「Sato Clinic」の前の線と対になるよう、英語コピーの後ろに同じ線を置く */
+@media (max-width: 73.75rem) {
+  .hero-tagline { display: flex; justify-content: flex-end; align-items: center; gap: .625rem; }
+  .hero-tagline::after { content: ""; flex: none; width: 1.75rem; height: 2px; border-radius: 1px; background: var(--color-brand); }
+}
+/* 英語コピーの幅の調整（2026-11）
+   600px 以下：見出し（33px・1行）より英語コピーの方が約10px長く、右端がそろわないため字間を詰める
+   360px 未満：画面に1行で収まらないため、字間を0にして文字を少し小さくする */
+@media (max-width: 37.5rem) {
+  .hero-tagline { letter-spacing: .02em; }
+}
+@media (max-width: 22.4375rem) {
+  .hero-tagline { font-size: .875rem; letter-spacing: 0; }
+}
+
+/* タブレットの横並び（768〜1180px）：見出しの左下にできる空きをなくす（2026-11）
+   電話番号の行だけを見出しの横に置き、休診日・最寄駅はその下の薄い緑の帯にまとめる */
+@supports (grid-template-columns: subgrid) {
+  @media (min-width: 48rem) and (max-width: 73.75rem) {
+    .hero-copy { grid-template-rows: auto auto; row-gap: .75rem; align-items: center; }
+    .hero-facts { grid-column: 1 / -1; grid-row: 1 / span 2; grid-template-columns: subgrid; grid-template-rows: subgrid; gap: normal; align-items: center; margin-top: 0; padding: 0; border-radius: 0; background: none; pointer-events: none; }
+    .hero-facts > * { pointer-events: auto; }
+    .hero-facts::before { content: ""; grid-column: 1 / -1; grid-row: 2; align-self: stretch; border-radius: .875rem; background: var(--color-surface); }
+    .hero-facts > .hero-fact-tel { grid-column: 2; grid-row: 1; }
+    .hero-facts > div:not(.hero-fact-tel) { grid-row: 2; padding: .625rem 1rem; border-top: 0; }
+    .hero-facts > .hero-fact-tel + div { grid-column: 1; }
+    .hero-facts > .hero-fact-tel + div + div { grid-column: 2; }
+  }
 }
