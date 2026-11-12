@@ -1,12 +1,12 @@
 :root {
   color-scheme: light;
-  --color-brand: #2e8b7f;
-  --color-brand-strong: #287d72; /* 白文字の背景・白地の文字用（白と4.9:1） */
-  --color-heading: #23685e;
+  --color-brand: #0f924a;
+  --color-brand-strong: #0b7a3e; /* 白文字の背景・白地の文字用（白と5.4:1） */
+  --color-heading: #08602f;
   --color-text: #1f2b29;
   --color-muted: #5a6966;
-  --color-line: #dde5e2;
-  --color-surface: #f1f7f5;
+  --color-line: #dcebe1;
+  --color-surface: #eef7f1;
   --color-white: #fff;
   --content-width: 75rem;
   --page-gutter: 1.5rem;
@@ -47,10 +47,10 @@ address { font-style: normal; }
 }
 /* Keep foreground and background paired in every interaction state. */
 .button:is(:hover, :focus-visible) { background: var(--color-surface); color: var(--color-heading); }
-.button:active { background: #dcece6; color: #184b44; }
-.button:is(.header-tel, .telephone-button) { background: #287d72; color: #fff; }
-.button:is(.header-tel, .telephone-button):is(:hover, :focus-visible) { background: #23685e; color: #fff; }
-.button:is(.header-tel, .telephone-button):active { background: #194f47; color: #fff; }
+.button:active { background: #dcf0e3; color: #064a24; }
+.button:is(.header-tel, .telephone-button) { background: #0b7a3e; color: #fff; }
+.button:is(.header-tel, .telephone-button):is(:hover, :focus-visible) { background: #08602f; color: #fff; }
+.button:is(.header-tel, .telephone-button):active { background: #064a24; color: #fff; }
 .pending-link { cursor: default; }
 
 /* Full-width header; the navigation is shared by desktop and mobile. */
@@ -87,9 +87,9 @@ address { font-style: normal; }
 .hours-table td.closed { color: #7d8a87; font-size: 1rem; }
 .table-legend { margin-top: .5rem; color: var(--color-muted); font-size: .875rem; line-height: 1.35; }
 .holiday-note { margin-top: .625rem; color: var(--color-muted); font-size: .875rem; line-height: 1.8; }
-.hours-contact { display: flex; flex-direction: column; justify-content: center; gap: 1rem; min-height: 21.875rem; padding: 1.5rem 1.75rem 2rem; border: 1px solid #c8e7dc; border-radius: 1rem; background: linear-gradient(166deg, #77dcca 0 5%, #c1efe1 5% 9%, transparent 9% 91%, #b4eadc 91% 94%, #77dcca 94%), linear-gradient(120deg, #fff, #effaf6); }
-.hours-contact-row { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); align-items: center; gap: .75rem; padding-bottom: .875rem; border-bottom: 1px solid #b4dfc7; }
-.hours-contact-row svg { width: 2rem; height: 2rem; color: #0ba48e; }
+.hours-contact { display: flex; flex-direction: column; justify-content: center; gap: 1rem; min-height: 21.875rem; padding: 1.5rem 1.75rem 2rem; border: 1px solid #c4e5cf; border-radius: 1rem; background: linear-gradient(166deg, #7fd39f 0 5%, #c6ebd2 5% 9%, transparent 9% 91%, #b8e4c6 91% 94%, #7fd39f 94%), linear-gradient(120deg, #fff, #eff9f2); }
+.hours-contact-row { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); align-items: center; gap: .75rem; padding-bottom: .875rem; border-bottom: 1px solid #b2dbc0; }
+.hours-contact-row svg { width: 2rem; height: 2rem; color: #0f924a; }
 .hours-contact-row dt { color: var(--color-heading); font-weight: 700; font-size: 1rem; line-height: 1.5; }
 .hours-contact-row dd { font-size: 1rem; line-height: 1.55; }
 .telephone-button { min-height: 3rem; border: 0; gap: 1rem; font-size: 1.1875rem; }
@@ -175,7 +175,7 @@ address { font-style: normal; }
 .access-heading { min-height: 4.125rem; }
 .access-heading .section-title { letter-spacing: 0; line-height: 1.4; }
 .access-grid { display: grid; grid-template-columns: minmax(0, 672fr) minmax(0, 400fr); align-items: start; gap: 2.3125rem; width: 100%; max-width: 69.3125rem; margin-inline: auto; }
-.map-placeholder, .map-embed { display: block; width: 100%; aspect-ratio: 2 / 1; border: 1px solid var(--color-line); background: #e5eeea; }
+.map-placeholder, .map-embed { display: block; width: 100%; aspect-ratio: 2 / 1; border: 1px solid var(--color-line); background: #e5f0e8; }
 /* お問い合わせは画像ではなくHTMLの文字で表示する（拡大・読み上げ・翻訳に対応） */
 .contact-panel { min-width: 0; }
 .contact-content { display: flex; flex-direction: column; gap: .75rem; min-width: 0; padding: 1.5rem; background: #fff; border-radius: .875rem; }
@@ -187,13 +187,13 @@ address { font-style: normal; }
 .contact-content .contact-phone:is(:hover, :focus-visible) { background: var(--color-heading); }
 .contact-address { display: grid; gap: .5rem; font-size: 1rem; }
 
-.site-footer { padding-block: .625rem; background: #2b8277; color: #fff; }
+.site-footer { padding-block: .625rem; background: #e8f5ec; color: #08602f; }
 .footer-top { display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
 .footer-name { font: 700 1.5625rem/1.3 var(--font-english); letter-spacing: 2px; }
 .footer-nav { flex: 1; max-width: 59rem; }
 .footer-nav ul { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
 .footer-nav a { display: inline-flex; align-items: center; min-height: 2.75rem; font-size: 1rem; font-weight: 700; line-height: 1.35; }
-.footer-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-top: .25rem; border-top: 1px solid rgb(255 255 255 / 25%); padding-top: .375rem; }
+.footer-bottom { display: flex; justify-content: space-between; align-items: flex-end; gap: 1rem; margin-top: .25rem; border-top: 1px solid rgb(8 96 47 / 20%); padding-top: .375rem; }
 .footer-bottom address { font-size: 1.125rem; line-height: 1.5; }
 .footer-bottom small { font-size: .71875rem; line-height: 1.75; white-space: nowrap; }
 
@@ -392,3 +392,29 @@ address { font-style: normal; }
 .access-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem 1rem; }
 /* お知らせの日付（js/news-data.js で date を入れたときだけ表示） */
 .news-link-date { flex: none; margin-right: 1.25rem; color: var(--color-muted); font-size: .9375rem; font-weight: 400; }
+
+/* フッターの住所と電話番号：それぞれ途中で改行せず、入りきらないときは住所のあとで改行（2026-11） */
+.footer-bottom address { display: flex; flex-wrap: wrap; align-items: center; column-gap: 1.25em; }
+.footer-address, .footer-tel { white-space: nowrap; }
+
+/* 架空の医院であることを知らせる帯（全ページ共通・ヘッダーの上。2026-11） */
+.site-notice {
+  padding: .375rem .75rem; background: #e3f3e8; color: #08602f;
+  font-size: .75rem; line-height: 1.5; text-align: center;
+  white-space: nowrap; /* <br class="sp-br"> の位置のほかでは改行しない */
+}
+.sp-br { display: none; }
+@media (max-width: 37.5rem) {          /* 今のスマホの切り替え幅（600px）と同じ */
+  .site-notice { font-size: .6875rem; } /* 11px */
+  .sp-br { display: inline; }
+}
+@media (max-width: 22.4375rem) {       /* 360px 未満（359px 以下） */
+  .site-notice { font-size: .625rem; }  /* 10px：320px でも2行に収める */
+}
+
+/* 院長挨拶：「院長挨拶の全文へ」ボタンと署名を右揃え（全幅共通。2026-11） */
+.message-actions { justify-content: flex-end; flex-wrap: wrap; }
+.message-signature { text-align: right; }
+@media (max-width: 37.5rem) {
+  .message-actions { align-items: flex-end; }
+}

@@ -6,10 +6,10 @@
    ========================================================= */
 
 :root {
-  /* 白地の文字にも、白抜き文字の背景にも使える濃さ（白とのコントラスト 4.9:1）。
-     style.css の --color-brand（#2e8b7f）は白と 4.1:1 で、本文サイズの文字には足りないため */
-  --color-brand-strong: #287d72;
-  --color-field-line: #b9c8c4;
+  /* 白地の文字にも、白抜き文字の背景にも使える濃さ（白とのコントラスト 5.4:1）。
+     style.css の --color-brand（#0f924a・ロゴの緑）は白と 4.0:1 で、本文サイズの文字には足りないため */
+  --color-brand-strong: #0b7a3e;
+  --color-field-line: #b5cdbd;
   --color-photo: #dfe3e2;
   --space-section: clamp(3rem, 6vw, 5rem);
 }
@@ -47,7 +47,7 @@
 .photo-slot--round-lg { border-radius: 1.25rem; }
 img.photo { width: 100%; aspect-ratio: var(--ratio, 3 / 2); object-fit: cover; border-radius: .875rem; }
 
-/* ---------- 院長あいさつ ---------- */
+/* ---------- 院長挨拶 ---------- */
 .message-page { display: grid; grid-template-columns: minmax(0, 430fr) minmax(0, 710fr); gap: clamp(1.5rem, 4vw, 3.25rem); align-items: start; }
 .message-page .photo-slot { --ratio: 1 / 1; }
 .message-page-text p { line-height: 1.95; }
@@ -84,7 +84,7 @@ img.photo { width: 100%; aspect-ratio: var(--ratio, 3 / 2); object-fit: cover; b
 .field:focus-visible { outline: 3px solid var(--color-heading); outline-offset: 2px; border-color: var(--color-brand); }
 select.field {
   appearance: none; padding-right: 3rem; cursor: pointer;
-  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M0 0h12L6 10z' fill='%23287d72'/%3E%3C/svg%3E") no-repeat right 1.25rem center / .75rem;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M0 0h12L6 10z' fill='%230b7a3e'/%3E%3C/svg%3E") no-repeat right 1.25rem center / .75rem;
 }
 textarea.field { min-height: 10rem; resize: vertical; }
 .choice-group { display: flex; flex-wrap: wrap; gap: .25rem 2.25rem; }
@@ -102,7 +102,7 @@ textarea.field { min-height: 10rem; resize: vertical; }
   color: #fff; font-size: 1.125rem; font-weight: 700; letter-spacing: .1em; cursor: pointer;
 }
 .submit-button:is(:hover, :focus-visible) { background: var(--color-heading); }
-.submit-button:active { background: #194f47; }
+.submit-button:active { background: #064a24; }
 .form-after { max-width: 47rem; margin: 2rem auto 0; color: var(--color-muted); }
 
 /* ---------- お知らせ ---------- */
@@ -255,3 +255,30 @@ img.photo--director { object-position: 9% 30%; }
 .split-text img.photo-in-text { margin-top: 1.5rem; }
 .policy--no-photo { grid-template-columns: minmax(0, 1fr); }
 .staff-page-card img.staff-page-photo { grid-row: span 2; }
+
+/* ---------- 2026-11 ご予約フォームの送信（js/reservation.js・js/reservation-complete.js） ---------- */
+:root {
+  /* エラーの文字色（白地とのコントラスト 5.6:1） */
+  --color-error: #b3261e;
+  --color-error-surface: #fdf3f2;
+}
+.form-field { min-width: 0; }
+.form-error { color: var(--color-error); font-size: .9375rem; font-weight: 700; line-height: 1.6; }
+.form-error:not(:empty) { margin-top: .5rem; }
+.form-agree .form-error:not(:empty) { margin-top: .25rem; }
+.field[aria-invalid="true"] { border: 2px solid var(--color-error); background-color: var(--color-error-surface); }
+.choice input[aria-invalid="true"] { outline: 2px solid var(--color-error); outline-offset: 2px; }
+.form-error-summary { margin-top: 2rem; padding: 1.25rem 1.5rem; border: 2px solid var(--color-error); border-radius: .5rem; background: var(--color-error-surface); }
+.form-error-summary:focus-visible { outline: 3px solid var(--color-heading); outline-offset: 4px; }
+.form-error-summary > p { color: var(--color-error); font-weight: 700; }
+.form-error-summary ul { margin-top: .5rem; padding-left: 1.25rem; list-style: disc; }
+.form-error-summary li + li { margin-top: .25rem; }
+.form-error-summary a { text-decoration: underline; text-underline-offset: .2em; }
+.form-error-summary a:hover { color: var(--color-error); }
+/* 迷惑送信よけの欄（人には見えない・読み上げない） */
+.form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.submit-button:disabled { background: var(--color-muted); cursor: wait; }
+/* 送信完了ページの受付番号 */
+.complete-receipt { max-width: 55rem; margin: 1.5rem auto 0; font-size: 1.125rem; font-weight: 700; }
+.complete-receipt strong { color: var(--color-brand-strong); font: 700 1.375rem/1.4 var(--font-heading); letter-spacing: .06em; overflow-wrap: anywhere; }
+.complete-demo-note { margin-top: .5rem; color: var(--color-error); font-size: .9375rem; }

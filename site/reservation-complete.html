@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/sub.css">
   <script src="js/main.js" defer></script>
+  <script src="js/reservation-complete.js" defer></script>
 </head>
 <body id="top">
 <a class="skip-link" href="#main-content">本文へ</a>
@@ -18,10 +19,11 @@
   <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-5-5 5 5-5 5"/></symbol>
 </defs></svg>
+<p class="site-notice">当サイトは制作課題用の架空の医院です。<br class="sp-br">掲載している住所・電話番号・人物はすべて架空のものです。</p>
 <header class="site-header">
   <a class="brand" href="index.html" aria-label="佐藤医院 トップ"><img class="brand-image" src="assets/images/logo.png" width="500" height="150" alt="佐藤医院" decoding="async"></a>
   <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><svg aria-hidden="true"><use href="#icon-menu"></use></svg><span>メニュー</span></button>
-  <nav class="primary-nav" id="primary-navigation" aria-label="メインナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長あいさつ</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li></ul></nav>
+  <nav class="primary-nav" id="primary-navigation" aria-label="メインナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長挨拶</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li></ul></nav>
   <div class="header-actions">
     <a class="button header-tel" href="tel:0000000000" aria-label="佐藤医院に電話する 00-0000-0000">00-0000-0000</a>
     <a class="button header-reservation" href="reservation.html" aria-current="page">ご予約・ご相談</a>
@@ -40,6 +42,11 @@
       <div class="complete-icon"><svg aria-hidden="true"><use href="#icon-check"></use></svg></div>
       <h2 id="complete-heading">ご予約・ご相談を受け付けました</h2>
       <p class="complete-lead">佐藤医院へお問い合わせいただき、ありがとうございます。</p>
+      <!-- 受付番号は js/reservation-complete.js が URL（?id=…）から表示します。番号がないときは非表示のまま -->
+      <div class="complete-receipt" id="complete-receipt" hidden>
+        <p>受付番号：<strong id="complete-receipt-id"></strong></p>
+        <p class="complete-demo-note" id="complete-demo-note" hidden>※テスト表示です。まだGoogleに接続していないため、実際には送信されていません。</p>
+      </div>
 
       <div class="complete-box">
         <h3>当院からの確認のご連絡をお待ちください</h3>
@@ -67,8 +74,8 @@
 </main>
 <footer class="site-footer">
   <div class="container">
-    <div class="footer-top"><p class="footer-name">佐藤医院</p><nav class="footer-nav" aria-label="フッターナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長あいさつ</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li><li><a href="reservation.html" aria-current="page">ご予約・ご相談</a></li></ul></nav></div>
-    <div class="footer-bottom"><address>〒123-4567 東京都台東区上野0-0-0　 電話番号：<a href="tel:0000000000">00-0000-0000</a></address><small>©佐藤医院</small></div>
+    <div class="footer-top"><p class="footer-name">佐藤医院</p><nav class="footer-nav" aria-label="フッターナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長挨拶</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li><li><a href="reservation.html" aria-current="page">ご予約・ご相談</a></li></ul></nav></div>
+    <div class="footer-bottom"><address><span class="footer-address">〒123-4567 東京都台東区上野0-0-0</span> <span class="footer-tel">電話番号：<a href="tel:0000000000">00-0000-0000</a></span></address><small>©佐藤医院</small></div>
   </div>
 </footer>
 </body>

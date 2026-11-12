@@ -3,10 +3,23 @@
 課題「佐藤医院」サイトの **ご予約・ご相談ページ** と、送信内容を Google で受け取って **Gmail から返信できる** 仕組みです。
 デザインは `sato-clinic-kit/01 ご予約・ご相談.png` に合わせています。
 
+> **2026年11月12日から：** 実際に使うページは、サイト本体の `reservation.html`（ご予約・ご相談）と `reservation-complete.html`（送信完了）です。
+> 見た目・ヘッダー・フッター・ロゴはサイト共通のもの（`css/style.css`・`css/sub.css`・`js/main.js`・`assets/images/logo.png`）を使い、
+> このフォルダからは入力チェックと送信の仕組み（`contact.js` → `js/reservation.js`）と `gas/Code.gs` だけを使っています。
+> `contact.html`・`contact.css`・`contact.js`・`img/` は元の見本として残しているだけで、サイトでは使っていません。
+>
+> | サイト側のファイル | 内容 |
+> |---|---|
+> | `js/reservation.js` | 入力チェック・送信。**`GAS_URL` に Apps Script の URL を貼るのはこのファイル** |
+> | `js/reservation-complete.js` | 送信完了ページに受付番号を表示（URL の `?id=` から。`SATO-000000-0000` の形のときだけ） |
+> | `css/sub.css` の末尾 | エラー表示・エラー一覧・受付番号の見た目 |
+>
+> 下の手順や説明の `contact.html` / `contact.js` は、`reservation.html` / `js/reservation.js` と読み替えてください。
+
 ## しくみ
 
 ```
-相談者がフォームを送信（contact.html）
+相談者がフォームを送信（reservation.html → js/reservation.js）
         │  fetch で POST
         ▼
 Google Apps Script（gas/Code.gs）……kazuhide.aoki@gmail.com のアカウントで動く
@@ -44,15 +57,15 @@ Google Apps Script（gas/Code.gs）……kazuhide.aoki@gmail.com のアカウン
    - 次のユーザーとして実行：**自分**
    - アクセスできるユーザー：**全員**
    - 「デプロイ」→ 表示された **ウェブアプリの URL（…/exec）** をコピー
-6. `contact.js` の先頭 `const GAS_URL = '';` の `''` の中に、その URL を貼る
+6. サイトの `js/reservation.js` の先頭 `const GAS_URL = "";` の `""` の中に、その URL を貼る
 
 > **大事：** `Code.gs` を書き換えたあとは「デプロイ」→「デプロイを管理」→ 鉛筆 →「バージョン：新しいバージョン」→「デプロイ」。
 > これをしないと、公開中のフォームには古いコードが使われます（URL は変わりません）。
 
 ## 本番の送信テスト
 
-1. VS Code の「Live Server」などで `contact.html` を開く（GitHub Pages などに公開しても同じ）
-2. 自分の別アドレス（スマホのアドレスなど）を入れて送信 → 完了画面に受付番号が出る
+1. VS Code の「Live Server」などで `reservation.html` を開く（GitHub Pages などに公開しても同じ）
+2. 自分の別アドレス（スマホのアドレスなど）を入れて送信 → `reservation-complete.html` に移り、受付番号が出る
 3. Gmail に通知が届く → そのまま「返信」→ 相談者側のアドレスに届くことを確認
 4. 受付一覧スプレッドシートに行が増えていることを確認。対応が済んだら「対応状況」を「対応済み」に
 
@@ -70,17 +83,18 @@ npm test
 ```
 
 - `tests/gas.test.js` … Code.gs を Google の代わりの偽物で動かすテスト（18件）
-- `tests/form.test.js` … 本物のブラウザ（Chromium）で画面を操作するテスト（9件）。
-  Code.gs を手元で動かすサーバー（`tests/mock-gas-server.js`）に実際に送信し、メール2通とシートの行まで確認します。
+- `tests/form.test.js` … 本物のブラウザ（Chromium）でサイトの `reservation.html` → `reservation-complete.html` を操作するテスト（11件）。
+  Code.gs を手元で動かすサーバー（`tests/mock-gas-server.js`）に実際に送信し、完了ページの受付番号、メール2通、シートの行まで確認します。
   画面写真は `tests/screenshots/` に保存されます。
 
-## 入力のルール（contact.js と Code.gs で同じ。片方を変えたらもう片方も）
+## 入力のルール（js/reservation.js と Code.gs で同じ。片方を変えたらもう片方も）
 
 | 項目 | ルール |
 |---|---|
-| お名前・ふりがな・電話番号・ご希望の内容・初診/再診・第1希望・同意 | 必須 |
+| お名前・ふりがな・電話番号・ご希望の内容・初診/再診・第1希望・同意 | 必須（初診・再診は最初から選んでおかない） |
+| お名前・ふりがな | 50文字まで |
 | ふりがな | ひらがな。カタカナは自動でひらがなに直す |
-| 電話番号 | 0から始まる10〜11桁。全角は半角に直す |
+| 電話番号 | 0から始まる10〜11桁。使える文字は数字と「-」「()」だけ。全角は半角に直す |
 | メールアドレス | 任意。入力があれば受付確認メールを送る。なければ通知メールに「電話で連絡」と出る |
 | 希望日 | 明日〜3か月先。木曜・日曜は休診、土曜は午前のみ（土曜を選ぶと「午後」を選べなくなる） |
 | 第2希望 | 任意。日付と時間帯はセット。第1希望と同じ日時は不可 |
@@ -98,7 +112,7 @@ npm test
 
 - 自動返信の差出人は **kazuhide.aoki@gmail.com**（表示名は「佐藤医院」）です。相談者にこのアドレスが見えます。課題のテストでは問題ありませんが、本物の医院なら医院用のGoogleアカウントで同じ手順を行います。
 - 無料の Google アカウントで送れるメールは **1日100通まで** です。
-- 送信先の URL は `contact.js` に書かれるので誰でも見られますが、通知先のメールアドレスは `Code.gs`（Google側）にしかなく、ページからは見えません。
+- 送信先の URL は `js/reservation.js` に書かれるので誰でも見られますが、通知先のメールアドレスは `Code.gs`（Google側）にしかなく、ページからは見えません。
 - 本物の医院で使う場合は、症状などの個人情報を扱うので、プライバシーポリシーのページを用意してください。
 
 ## VS Code の Claude へのメモ
@@ -107,4 +121,6 @@ npm test
 - 色：`--accent:#2E8B7F` / `--accent-dark:#23685E` / 背景 `#EEF5F3`（制作依頼書・Kit見本と同じ）。
 - 書体は他ページと同じ「Hiragino Sans」優先。見出し・本文のフォントとサイズはユーザーがあとで指定する予定。
 - ヘッダーとフッターのリンク先（`index.html` `news.html` など）は仮のファイル名。サイト全体のファイル名に合わせて直す。
-- 入力ルールを変えるときは `contact.js` の `RULES` / `checkDate` と `Code.gs` の `validate_` / `checkDate_` を両方直し、`npm test` を通す。
+- 入力ルールを変えるときは `js/reservation.js` の `RULES` / `checkDate` と `Code.gs` の `validate_` / `checkDate_` を両方直し、`npm test` を通す。
+- （2026-11-12）サイト本体に組み込み済み。画面に出す原稿外の文言は、エラーの文言・エラー一覧・通信失敗のお詫び・「送信中…」・完了ページの「受付番号：」・テスト表示の注記・「午後（土曜は休診）」だけ。文字数カウンターとメール欄の注記は出さない。
+- 課題中は制作者の Google アカウントで動かし、通知先も同じ。本番では医院用アカウントで setup からやり直し、`CONFIG.NOTIFY_TO` を医院のアドレスにする。プライバシーポリシーのページは本番公開前に必要（今回は作らない）。

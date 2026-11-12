@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/sub.css">
   <script src="js/main.js" defer></script>
+  <script src="js/reservation.js" defer></script>
 </head>
 <body id="top">
 <a class="skip-link" href="#main-content">本文へ</a>
@@ -17,10 +18,11 @@
   <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
   <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-5-5 5 5-5 5"/></symbol>
 </defs></svg>
+<p class="site-notice">当サイトは制作課題用の架空の医院です。<br class="sp-br">掲載している住所・電話番号・人物はすべて架空のものです。</p>
 <header class="site-header">
   <a class="brand" href="index.html" aria-label="佐藤医院 トップ"><img class="brand-image" src="assets/images/logo.png" width="500" height="150" alt="佐藤医院" decoding="async"></a>
   <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><svg aria-hidden="true"><use href="#icon-menu"></use></svg><span>メニュー</span></button>
-  <nav class="primary-nav" id="primary-navigation" aria-label="メインナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長あいさつ</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li></ul></nav>
+  <nav class="primary-nav" id="primary-navigation" aria-label="メインナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長挨拶</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li></ul></nav>
   <div class="header-actions">
     <a class="button header-tel" href="tel:0000000000" aria-label="佐藤医院に電話する 00-0000-0000">00-0000-0000</a>
     <a class="button header-reservation" href="reservation.html" aria-current="page">ご予約・ご相談</a>
@@ -49,64 +51,99 @@
 
       <section class="form-section" aria-labelledby="form-heading">
         <h2 id="form-heading">Webでのご予約・ご相談</h2>
-        <!-- DEMO: 送信先は表示確認用に完了ページへ GET で飛ばしています。
-             本番では送信先（フォームサービスやサーバー）に合わせ、必ず method="post" にしてください。 -->
-        <form action="reservation-complete.html" method="get">
+        <!-- 送信は js/reservation.js が Google Apps Script（sato-contact/gas/Code.gs）へ行い、
+             成功したら reservation-complete.html に受付番号を渡して移動します。
+             method="post" は、JavaScript が動かないときに入力内容が URL に載らないようにするためです。 -->
+        <div class="form-error-summary" id="f-error-summary" role="alert" tabindex="-1" hidden></div>
+        <form id="reservation-form" method="post">
+          <!-- 迷惑送信よけ：人には見えない欄。ここに入力があれば Code.gs は受け付けたふりをして何もしない -->
+          <div class="form-trap" aria-hidden="true">
+            <label for="f-website">website</label>
+            <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
           <div class="form-row">
             <label class="form-label" for="f-name">お名前<span class="required">必須</span></label>
-            <input class="field" id="f-name" name="name" type="text" autocomplete="name" placeholder="例）佐藤 花子" required>
+            <div class="form-field">
+              <input class="field" id="f-name" name="name" type="text" autocomplete="name" placeholder="例）佐藤 花子" maxlength="50" required aria-describedby="f-name-error">
+              <p class="form-error" id="f-name-error"></p>
+            </div>
           </div>
           <div class="form-row">
             <label class="form-label" for="f-kana">ふりがな<span class="required">必須</span></label>
-            <input class="field" id="f-kana" name="kana" type="text" placeholder="例）さとう はなこ" required>
+            <div class="form-field">
+              <input class="field" id="f-kana" name="kana" type="text" placeholder="例）さとう はなこ" maxlength="50" required aria-describedby="f-kana-error">
+              <p class="form-error" id="f-kana-error"></p>
+            </div>
           </div>
           <div class="form-row">
             <label class="form-label" for="f-tel">電話番号<span class="required">必須</span></label>
-            <input class="field" id="f-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" placeholder="例）00-0000-0000" required>
+            <div class="form-field">
+              <input class="field" id="f-tel" name="tel" type="tel" autocomplete="tel" inputmode="tel" placeholder="例）00-0000-0000" maxlength="20" required aria-describedby="f-tel-error">
+              <p class="form-error" id="f-tel-error"></p>
+            </div>
           </div>
           <div class="form-row">
             <label class="form-label" for="f-mail">メールアドレス</label>
-            <input class="field" id="f-mail" name="email" type="email" autocomplete="email" placeholder="例）sample@example.com">
+            <div class="form-field">
+              <input class="field" id="f-mail" name="email" type="email" autocomplete="email" placeholder="例）sample@example.com" maxlength="254" aria-describedby="f-email-error">
+              <p class="form-error" id="f-email-error"></p>
+            </div>
           </div>
           <div class="form-row">
             <label class="form-label" for="f-type">ご希望の内容<span class="required">必須</span></label>
-            <select class="field" id="f-type" name="type" required>
-              <option value="">選択してください</option>
-              <option>一般診療</option>
-              <option>予防接種</option>
-              <option>健康診断</option>
-              <option>その他のご相談</option>
-            </select>
+            <div class="form-field">
+              <select class="field" id="f-type" name="type" required aria-describedby="f-type-error">
+                <option value="">選択してください</option>
+                <option>一般診療</option>
+                <option>予防接種</option>
+                <option>健康診断</option>
+                <option>その他のご相談</option>
+              </select>
+              <p class="form-error" id="f-type-error"></p>
+            </div>
           </div>
-          <div class="form-row" role="radiogroup" aria-labelledby="f-visit-label" aria-required="true">
+          <div class="form-row" role="radiogroup" aria-labelledby="f-visit-label" aria-required="true" aria-describedby="f-visit-error">
             <p class="form-label" id="f-visit-label">初診・再診<span class="required">必須</span></p>
-            <div class="choice-group">
-              <label class="choice"><input type="radio" name="visit" value="初診" required>初診</label>
-              <label class="choice"><input type="radio" name="visit" value="再診">再診</label>
+            <div class="form-field">
+              <div class="choice-group">
+                <label class="choice"><input id="f-visit1" type="radio" name="visit" value="初診" required>初診</label>
+                <label class="choice"><input id="f-visit2" type="radio" name="visit" value="再診">再診</label>
+              </div>
+              <p class="form-error" id="f-visit-error"></p>
             </div>
           </div>
           <div class="form-row" role="group" aria-labelledby="f-date1-label">
             <p class="form-label" id="f-date1-label">ご希望日（第1希望）<span class="required">必須</span></p>
-            <div class="date-group">
-              <input class="field" id="f-date1" name="date1" type="date" aria-labelledby="f-date1-label f-date1-d" required><span class="sr-only" id="f-date1-d">日付</span>
-              <select class="field" id="f-time1" name="time1" aria-labelledby="f-date1-label f-time1-t" required><option value="">午前 / 午後</option><option>午前</option><option>午後</option></select><span class="sr-only" id="f-time1-t">時間帯</span>
+            <div class="form-field">
+              <div class="date-group">
+                <input class="field" id="f-date1" name="date1" type="date" aria-labelledby="f-date1-label f-date1-d" aria-describedby="f-date1-error" required><span class="sr-only" id="f-date1-d">日付</span>
+                <select class="field" id="f-time1" name="time1" aria-labelledby="f-date1-label f-time1-t" aria-describedby="f-date1-error" required><option value="">午前 / 午後</option><option value="午前">午前</option><option value="午後">午後</option></select><span class="sr-only" id="f-time1-t">時間帯</span>
+              </div>
+              <p class="form-error" id="f-date1-error"></p>
             </div>
           </div>
           <div class="form-row" role="group" aria-labelledby="f-date2-label">
             <p class="form-label" id="f-date2-label">ご希望日（第2希望）</p>
-            <div class="date-group">
-              <input class="field" id="f-date2" name="date2" type="date" aria-labelledby="f-date2-label f-date2-d"><span class="sr-only" id="f-date2-d">日付</span>
-              <select class="field" id="f-time2" name="time2" aria-labelledby="f-date2-label f-time2-t"><option value="">午前 / 午後</option><option>午前</option><option>午後</option></select><span class="sr-only" id="f-time2-t">時間帯</span>
+            <div class="form-field">
+              <div class="date-group">
+                <input class="field" id="f-date2" name="date2" type="date" aria-labelledby="f-date2-label f-date2-d" aria-describedby="f-date2-error"><span class="sr-only" id="f-date2-d">日付</span>
+                <select class="field" id="f-time2" name="time2" aria-labelledby="f-date2-label f-time2-t" aria-describedby="f-date2-error"><option value="">午前 / 午後</option><option value="午前">午前</option><option value="午後">午後</option></select><span class="sr-only" id="f-time2-t">時間帯</span>
+              </div>
+              <p class="form-error" id="f-date2-error"></p>
             </div>
           </div>
           <div class="form-row form-row--top">
             <label class="form-label" for="f-message">ご相談内容</label>
-            <textarea class="field" id="f-message" name="message" rows="6" placeholder="症状やご相談内容をご記入ください"></textarea>
+            <div class="form-field">
+              <textarea class="field" id="f-message" name="message" rows="6" placeholder="症状やご相談内容をご記入ください" maxlength="1000" aria-describedby="f-message-error"></textarea>
+              <p class="form-error" id="f-message-error"></p>
+            </div>
           </div>
 
           <div class="form-agree">
             <p>ご入力いただいた個人情報は、ご予約・ご相談への対応のためだけに使用し、適切に管理いたします。</p>
-            <label class="choice"><input type="checkbox" name="agree" value="1" required>個人情報の取り扱いに同意する<span class="required">必須</span></label>
+            <label class="choice"><input id="f-agree" type="checkbox" name="agree" value="1" required aria-describedby="f-agree-error">個人情報の取り扱いに同意する<span class="required">必須</span></label>
+            <p class="form-error" id="f-agree-error"></p>
             <button class="submit-button" type="submit">送信する</button>
             <p class="form-after">送信後、当院より確認のご連絡をいたします。ご連絡をもってご予約の確定となります。お急ぎの場合は、お電話でご連絡ください。</p>
           </div>
@@ -117,8 +154,8 @@
 </main>
 <footer class="site-footer">
   <div class="container">
-    <div class="footer-top"><p class="footer-name">佐藤医院</p><nav class="footer-nav" aria-label="フッターナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長あいさつ</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li><li><a href="reservation.html" aria-current="page">ご予約・ご相談</a></li></ul></nav></div>
-    <div class="footer-bottom"><address>〒123-4567 東京都台東区上野0-0-0　 電話番号：<a href="tel:0000000000">00-0000-0000</a></address><small>©佐藤医院</small></div>
+    <div class="footer-top"><p class="footer-name">佐藤医院</p><nav class="footer-nav" aria-label="フッターナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長挨拶</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li><li><a href="reservation.html" aria-current="page">ご予約・ご相談</a></li></ul></nav></div>
+    <div class="footer-bottom"><address><span class="footer-address">〒123-4567 東京都台東区上野0-0-0</span> <span class="footer-tel">電話番号：<a href="tel:0000000000">00-0000-0000</a></span></address><small>©佐藤医院</small></div>
   </div>
 </footer>
 </body>
