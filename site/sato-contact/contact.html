@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ご予約・ご相談｜佐藤医院</title>
+<meta name="description" content="佐藤医院のご予約・ご相談ページです。お電話またはWebフォームからご予約いただけます。">
+<link rel="stylesheet" href="contact.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html"><img src="img/Logo/logo.png" alt="佐藤医院 Sato Clinic" width="150" height="45"></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="global-nav" aria-label="メニューを開く">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="global-nav" id="global-nav" aria-label="グローバルナビゲーション">
+      <a href="index.html">トップ</a>
+      <a href="news.html">お知らせ</a>
+      <a href="treatment.html">診療内容</a>
+      <a href="about.html">当院について</a>
+      <a href="faq.html">よくあるご質問</a>
+      <a href="access.html">アクセス</a>
+      <a class="header-tel" href="tel:0000000000" aria-label="電話する 00-0000-0000">00-0000-0000</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="page-title">
+    <div class="inner">
+      <nav class="breadcrumb" aria-label="パンくずリスト"><a href="index.html">トップ</a><span aria-hidden="true">&gt;</span><span aria-current="page">ご予約・ご相談</span></nav>
+      <p class="page-title-en" lang="en">RESERVATION</p>
+      <h1>ご予約・ご相談</h1>
+    </div>
+  </div>
+
+  <div class="inner content">
+    <p class="lead">一般診療は予約なしでも受け付けていますが、予約優先制となっております。予防接種や健康診断などは完全予約制です。<br class="pc-only">お電話またはWeb予約をご利用ください。</p>
+
+    <section class="tel-box" aria-labelledby="tel-heading">
+      <h2 id="tel-heading">お電話でのご予約</h2>
+      <p class="tel-number"><span class="tel-label">TEL</span><a href="tel:0000000000">00-0000-0000</a></p>
+      <p>受付時間：<span class="nowrap">午前　8:00〜11:00</span>　／　<span class="nowrap">午後　12:00〜17:00</span></p>
+      <p>休診日：木曜・土曜午後・日曜</p>
+    </section>
+
+    <section class="web-form" aria-labelledby="form-heading">
+      <h2 id="form-heading">Webでのご予約・ご相談</h2>
+
+      <div class="error-summary" id="error-summary" role="alert" tabindex="-1" hidden></div>
+
+      <form id="reserve-form" novalidate>
+        <!-- 迷惑送信よけ：人には見えない欄。ここに入力があれば送信しない -->
+        <div class="hp" aria-hidden="true">
+          <label for="website">この欄は入力しないでください</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="name">お名前<span class="req">必須</span></label>
+          <div class="form-field">
+            <input type="text" id="name" name="name" placeholder="例）佐藤 花子" autocomplete="name" maxlength="50" required aria-describedby="name-error">
+            <p class="field-error" id="name-error"></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="kana">ふりがな<span class="req">必須</span></label>
+          <div class="form-field">
+            <input type="text" id="kana" name="kana" placeholder="例）さとう はなこ" maxlength="50" required aria-describedby="kana-error">
+            <p class="field-error" id="kana-error"></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="tel">電話番号<span class="req">必須</span></label>
+          <div class="form-field">
+            <input type="tel" id="tel" name="tel" placeholder="例）00-0000-0000" autocomplete="tel" inputmode="tel" maxlength="20" required aria-describedby="tel-error">
+            <p class="field-error" id="tel-error"></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="email">メールアドレス</label>
+          <div class="form-field">
+            <input type="email" id="email" name="email" placeholder="例）sample@example.com" autocomplete="email" inputmode="email" maxlength="254" aria-describedby="email-note email-error">
+            <p class="field-note" id="email-note">ご入力いただくと、受付確認のメールをお送りします。</p>
+            <p class="field-error" id="email-error"></p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label class="form-label" for="type">ご希望の内容<span class="req">必須</span></label>
+          <div class="form-field">
+            <div class="select-wrap">
+              <select id="type" name="type" required aria-describedby="type-error">
+                <option value="">選択してください（一般診療／予防接種／健康診断／その他のご相談）</option>
+                <option value="一般診療">一般診療</option>
+                <option value="予防接種">予防接種</option>
+                <option value="健康診断">健康診断</option>
+                <option value="その他のご相談">その他のご相談</option>
+              </select>
+            </div>
+            <p class="field-error" id="type-error"></p>
+          </div>
+        </div>
+
+        <fieldset class="form-row">
+          <legend class="form-label">初診・再診<span class="req">必須</span></legend>
+          <div class="form-field">
+            <div class="radios">
+              <label><input type="radio" name="visit" value="初診" checked> 初診</label>
+              <label><input type="radio" name="visit" value="再診"> 再診</label>
+            </div>
+            <p class="field-error" id="visit-error"></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-row">
+          <legend class="form-label">ご希望日（第1希望）<span class="req">必須</span></legend>
+          <div class="form-field">
+            <div class="date-group">
+              <label class="sr-only" for="date1">第1希望の日付</label>
+              <input type="date" id="date1" name="date1" required aria-describedby="date1-error">
+              <label class="sr-only" for="time1">第1希望の時間帯</label>
+              <div class="select-wrap select-short">
+                <select id="time1" name="time1" required aria-describedby="date1-error">
+                  <option value="">午前 / 午後</option>
+                  <option value="午前">午前</option>
+                  <option value="午後">午後</option>
+                </select>
+              </div>
+            </div>
+            <p class="field-error" id="date1-error"></p>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-row">
+          <legend class="form-label">ご希望日（第2希望）</legend>
+          <div class="form-field">
+            <div class="date-group">
+              <label class="sr-only" for="date2">第2希望の日付</label>
+              <input type="date" id="date2" name="date2" aria-describedby="date2-error">
+              <label class="sr-only" for="time2">第2希望の時間帯</label>
+              <div class="select-wrap select-short">
+                <select id="time2" name="time2" aria-describedby="date2-error">
+                  <option value="">午前 / 午後</option>
+                  <option value="午前">午前</option>
+                  <option value="午後">午後</option>
+                </select>
+              </div>
+            </div>
+            <p class="field-error" id="date2-error"></p>
+          </div>
+        </fieldset>
+
+        <div class="form-row">
+          <label class="form-label" for="message">ご相談内容</label>
+          <div class="form-field">
+            <textarea id="message" name="message" rows="5" maxlength="1000" placeholder="症状やご相談内容をご記入ください" aria-describedby="message-count message-error"></textarea>
+            <p class="field-note count" id="message-count" aria-live="polite">0 / 1000文字</p>
+            <p class="field-error" id="message-error"></p>
+          </div>
+        </div>
+
+        <div class="form-footer">
+          <p class="privacy">ご入力いただいた個人情報は、ご予約・ご相談への対応のためだけに使用し、適切に管理いたします。</p>
+          <label class="agree"><input type="checkbox" id="agree" name="agree" value="同意する" required aria-describedby="agree-error"> 個人情報の取り扱いに同意する<span class="req">必須</span></label>
+          <p class="field-error center" id="agree-error"></p>
+          <button class="submit" type="submit" id="submit-btn">送信する</button>
+          <p class="after-note">送信後、当院より確認のご連絡をいたします。ご連絡をもってご予約の確定となります。お急ぎの場合は、お電話でご連絡ください。</p>
+        </div>
+      </form>
+
+      <div class="complete" id="complete" tabindex="-1" hidden>
+        <h3>送信が完了しました</h3>
+        <p class="receipt">受付番号：<strong id="receipt-id"></strong></p>
+        <p>送信後、当院より確認のご連絡をいたします。ご連絡をもってご予約の確定となります。お急ぎの場合は、お電話でご連絡ください。</p>
+        <p class="demo-note" id="demo-note" hidden>※テスト表示です。まだGoogleに接続していないため、実際には送信されていません。</p>
+        <p><a class="back-link" href="index.html">トップページへ戻る</a></p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="inner">
+    <p class="footer-name">佐藤医院</p>
+    <p>〒123-4567　東京都台東区上野0-0-0</p>
+    <p>TEL：00-0000-0000　／　FAX：00-0000-0000</p>
+    <nav class="footer-nav" aria-label="フッターナビゲーション">
+      <a href="index.html">トップ</a><a href="news.html">お知らせ</a><a href="treatment.html">診療内容</a><a href="about.html">当院について</a><a href="faq.html">よくあるご質問</a><a href="access.html">アクセス</a>
+    </nav>
+    <p class="footer-note">※掲載情報は教材用の架空設定です。</p>
+  </div>
+</footer>
+
+<script src="contact.js"></script>
+</body>
+</html>

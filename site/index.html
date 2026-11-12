@@ -7,6 +7,8 @@
   <meta name="description" content="佐藤医院では、「地域に根ざした医療」をモットーに、患者様一人ひとりに寄り添った医療を提供することを目指しております。">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/main.js" defer></script>
+  <script src="js/news-data.js" defer></script>
+  <script src="js/news.js" defer></script>
 </head>
 <body id="top">
 <a class="skip-link" href="#main-content">本文へ</a>
@@ -52,6 +54,7 @@
         </table>
         <p class="table-legend">●＝診療　／＝休診</p>
         <p class="holiday-note">※祝祭日も診療を行っておりますが、休診日もございますので、事前にご確認ください。</p>
+        <a class="button hours-detail-link" href="access.html">診療時間・所在地の詳細へ</a>
       </div>
       <aside class="hours-contact" aria-label="受付時間とご予約・ご相談">
         <div class="hours-contact-row"><svg aria-hidden="true"><use href="#icon-clock"></use></svg><dl><dt>受付時間：</dt><dd>午前 8:00〜11:00 ／ 午後 12:00〜17:00</dd></dl></div>
@@ -67,7 +70,8 @@
   <section id="news" class="news" aria-labelledby="news-title">
     <div class="container news-layout">
       <div class="news-heading"><div><p class="eyebrow" lang="en">NEWS</p><h2 id="news-title" class="section-title">お知らせ</h2></div><a class="button" href="news.html">お知らせ一覧へ</a></div>
-      <ul class="news-list"><li><a class="news-link" href="news.html#news-1">インフルエンザ予防接種について</a></li>
+      <!-- お知らせは js/news-data.js から上位5件を表示（下の5件はJavaScriptが使えない環境向けの控え） -->
+      <ul class="news-list" data-news-list data-news-limit="5" data-news-href="news.html"><li><a class="news-link" href="news.html#news-1">インフルエンザ予防接種について</a></li>
 <li><a class="news-link" href="news.html#news-2">年末年始の休診について</a></li>
 <li><a class="news-link" href="news.html#news-3">健康診断のご案内</a></li>
 <li><a class="news-link" href="news.html#news-4">新型コロナウイルス対策について</a></li>
@@ -104,8 +108,7 @@
           <p class="medical-card-body">高血圧症、糖尿病、脂質異常症（高コレステロール血症）、メタボリック症候群など、生活習慣病の診断と治療を行います。病気の進行を予防し、健康維持のための生活指導や薬物療法を行います。</p>
         </li>
         <li class="medical-card">
-          <div class="medical-card-media"><img class="medical-photo" src="assets/images/temp-image-06-ph-photo-treat-photo.png" width="260" height="195" alt="消化器系の診療の診療風景" loading="lazy" decoding="async"><!-- CHECK: 消化器系のカードに「呼吸icon」が付いている。消化器用のアイコンに差し替える -->
-<img class="medical-icon" src="assets/images/temp-image-09-呼吸icon.png" width="87" height="87" alt="" loading="lazy" decoding="async"></div>
+          <div class="medical-card-media"><img class="medical-photo" src="assets/images/temp-image-06-ph-photo-treat-photo.png" width="260" height="195" alt="消化器系の診療の診療風景" loading="lazy" decoding="async"><img class="medical-icon" src="assets/images/icon-digestive.svg" width="87" height="87" alt="" loading="lazy" decoding="async"></div>
           <div class="medical-card-heading"><span class="medical-number" aria-hidden="true">03</span><h3>消化器系の診療</h3></div>
           <p class="medical-card-body">胃痛、胃もたれ、胸やけ、便秘、下痢などの消化器系の不調に対応しています。必要に応じて胃カメラや超音波検査などを実施し、胃腸の健康をサポートします。</p>
         </li>
@@ -171,14 +174,13 @@
   </section>
   <section id="access" class="access" aria-labelledby="access-title">
     <div class="container access-panel">
-      <div class="access-heading"><p class="eyebrow" lang="en">ACCESS</p><h2 id="access-title" class="section-title">アクセス</h2></div>
+      <div class="access-heading"><div><p class="eyebrow" lang="en">ACCESS</p><h2 id="access-title" class="section-title">アクセス</h2></div><a class="button" href="access.html">診療時間・所在地の詳細へ</a></div>
       <div class="access-grid">
         <!-- 住所が架空のため、JR上野駅付近を表示。実在の住所になったら q= を住所に変える -->
         <iframe class="map-embed" src="https://maps.google.com/maps?q=%E4%B8%8A%E9%87%8E%E9%A7%85&amp;z=16&amp;output=embed" title="佐藤医院周辺の地図（JR上野駅付近）" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
         <div class="contact-panel">
           <div class="contact-content">
             <h3 class="contact-title">お問い合わせ</h3>
-            <p class="contact-description">診療やご予約、各種ご相談など、お気軽にお問い合わせください。</p>
             <a class="contact-phone" href="tel:0000000000"><span>電話番号：00-0000-0000</span></a>
             <a class="contact-email" href="mailto:info@sato-clinic-test.jp"><span>メール：info@sato-clinic-test.jp</span></a>
             <p class="contact-fax">FAX：00-0000-0000</p>

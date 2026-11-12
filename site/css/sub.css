@@ -241,3 +241,17 @@ textarea.field { min-height: 10rem; resize: vertical; }
   .big-tel { font-size: 1.75rem; }
   .info-block { margin-top: 2.5rem; }
 }
+
+/* ---------- 2026-11 修正分（README の「変更点」参照） ---------- */
+.news-date { color: var(--color-muted); font-size: .9375rem; line-height: 1.6; }
+.news-date + h2 { margin-top: .25rem; }
+/* 支給写真の切り抜き位置（文字入り画像は文字のない部分だけを見せる） */
+img.photo--right { object-position: 100% 50%; }
+img.photo--top { object-position: 50% 25%; }
+img.photo--director { object-position: 9% 30%; }
+/* 写真のない診療内容カード（05〜07） */
+.medical-entry--text h2 { margin-top: 0; }
+.medical-entry img.photo { --ratio: 504 / 221; }
+.split-text img.photo-in-text { margin-top: 1.5rem; }
+.policy--no-photo { grid-template-columns: minmax(0, 1fr); }
+.staff-page-card img.staff-page-photo { grid-row: span 2; }

@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/sub.css">
   <script src="js/main.js" defer></script>
+  <script src="js/news-data.js" defer></script>
+  <script src="js/news.js" defer></script>
 </head>
 <body id="top">
 <a class="skip-link" href="#main-content">本文へ</a>
@@ -36,29 +38,25 @@
   </div>
   <div class="page-body">
     <div class="container">
-      <div class="news-archive">
+      <!-- お知らせは js/news-data.js から表示（下の記事はJavaScriptが使えない環境向けの控え） -->
+      <div class="news-archive" data-news-archive>
         <article class="news-entry" id="news-1" aria-labelledby="news-1-title">
-          <!-- 投稿日を出す場合はここに <p class="news-date"><time datetime="YYYY-MM-DD">…</time></p> -->
           <h2 id="news-1-title">インフルエンザ予防接種について</h2>
           <p>今年もインフルエンザの予防接種を開始いたしました。予約制となっておりますので、お電話または受付にてご予約をお願いいたします。例年、予約が集中しやすいため、早めのご予約をおすすめいたします。</p>
         </article>
         <article class="news-entry" id="news-2" aria-labelledby="news-2-title">
-          <!-- 投稿日を出す場合はここに <p class="news-date"><time datetime="YYYY-MM-DD">…</time></p> -->
           <h2 id="news-2-title">年末年始の休診について</h2>
-          <p>年末年始の休診日は、12月29日（金）〜1月4日（木）となります。年始は1月5日（金）より通常診療を再開いたします。皆様にはご不便をおかけしますが、何卒ご了承くださいますようお願いいたします。</p>
+          <p>年末年始の休診日は、12月29日（火）〜1月4日（月）となります。年始は1月5日（火）より通常診療を再開いたします。皆様にはご不便をおかけしますが、何卒ご了承くださいますようお願いいたします。</p>
         </article>
         <article class="news-entry" id="news-3" aria-labelledby="news-3-title">
-          <!-- 投稿日を出す場合はここに <p class="news-date"><time datetime="YYYY-MM-DD">…</time></p> -->
           <h2 id="news-3-title">健康診断のご案内</h2>
           <p>今年も健康診断を実施しております。定期的な健康チェックは、病気の早期発見・予防にとても重要です。各種健康診断メニューをご用意しておりますので、ご希望の方はお電話にてお申し込みください。</p>
         </article>
         <article class="news-entry" id="news-4" aria-labelledby="news-4-title">
-          <!-- 投稿日を出す場合はここに <p class="news-date"><time datetime="YYYY-MM-DD">…</time></p> -->
           <h2 id="news-4-title">新型コロナウイルス対策について</h2>
           <p>当院では引き続き、新型コロナウイルス感染症対策を徹底しております。ご来院の際には、マスクの着用、手指消毒にご協力をお願いいたします。また、発熱や風邪症状のある方は、事前にお電話でご相談いただけるとスムーズにご案内が可能です。</p>
         </article>
         <article class="news-entry" id="news-5" aria-labelledby="news-5-title">
-          <!-- 投稿日を出す場合はここに <p class="news-date"><time datetime="YYYY-MM-DD">…</time></p> -->
           <h2 id="news-5-title">オンライン診療の導入について</h2>
           <p>2024年より、オンライン診療を一部導入いたしました。通院が難しい方や、遠方にお住まいの方にご利用いただけます。ご希望の方は、当院スタッフまでお問い合わせください。</p>
         </article>

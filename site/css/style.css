@@ -385,3 +385,10 @@ address { font-style: normal; }
 }
 
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+/* ---------- 2026-11 修正分（README の「変更点」参照） ---------- */
+/* 診療時間欄・アクセス欄から「診療時間・所在地」ページへ */
+.hours-detail-link { margin-top: 1.25rem; }
+.access-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem 1rem; }
+/* お知らせの日付（js/news-data.js で date を入れたときだけ表示） */
+.news-link-date { flex: none; margin-right: 1.25rem; color: var(--color-muted); font-size: .9375rem; font-weight: 400; }
