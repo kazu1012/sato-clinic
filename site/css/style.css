@@ -199,7 +199,7 @@ address { font-style: normal; }
 
 /* Show the supplied wide image continuously; cover its baked-in copy with
    an opaque reading surface before rendering the accessible HTML copy. */
-@media (min-width: 73.7501rem) {
+@media (min-width: 73.8125rem) { /* 1181px 以上（73.7501rem だと 1180px でも一致してしまうため修正。2026-11） */
   .message-panel { background: #f4f5f4; min-height: 20.75rem; }
   .message-photo { grid-area: 1 / 1 / 2 / -1; min-height: 0; }
   .message-photo img { aspect-ratio: 1200 / 332; }
@@ -440,4 +440,12 @@ address { font-style: normal; }
 }
 @media (max-width: 37.5rem) {
   .hero-copy h1 { font-size: 2.0625rem; } /* 33px */
+}
+
+/* 院長挨拶：タブレット・スマホもデスクトップと同じ白ベースの背景にする（2026-11） */
+@media (max-width: 73.75rem) {
+  .message-panel { background: linear-gradient(90deg, #f4f5f4, #fff); }
+}
+@media (max-width: 53.75rem) {
+  .message-panel { background: linear-gradient(180deg, #f4f5f4, #fff); }
 }
