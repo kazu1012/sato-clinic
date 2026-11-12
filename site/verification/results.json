@@ -1,0 +1,312 @@
+{
+  "checkedAt": "2026-11-11T07:04:45.772Z",
+  "exceptions": [],
+  "remoteRequests": [],
+  "results": [
+    {
+      "viewport": 1440,
+      "documentWidth": 1440,
+      "height": 4798,
+      "horizontalOverflow": false,
+      "overflowingText": [],
+      "smallTargets": [
+        {
+          "element": "a.brand",
+          "text": "",
+          "width": 134,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "トップ",
+          "width": 48,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "お知らせ",
+          "width": 64,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "院長挨拶",
+          "width": 64,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "診療内容",
+          "width": 64,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "当院について",
+          "width": 95.53125,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "よくあるご質問",
+          "width": 112,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "アクセス",
+          "width": 63.375,
+          "height": 40
+        },
+        {
+          "element": "a.button.header-tel",
+          "text": "00-0000-0000",
+          "width": 168,
+          "height": 40
+        },
+        {
+          "element": "a",
+          "text": "00-0000-0000",
+          "width": 131.15625,
+          "height": 18
+        }
+      ],
+      "brokenImages": [],
+      "distortedImages": [],
+      "pendingLinksValid": true,
+      "internalLinksValid": true,
+      "realMapAbsent": true,
+      "columns": {
+        "medical": "287.25px 287.25px 287.25px 287.25px",
+        "staff": "386.656px 386.672px 386.656px"
+      },
+      "sections": [
+        {
+          "id": "hero",
+          "y": 60,
+          "height": 480
+        },
+        {
+          "id": "hours",
+          "y": 540,
+          "height": 400
+        },
+        {
+          "id": "news",
+          "y": 940,
+          "height": 408
+        },
+        {
+          "id": "message",
+          "y": 1348,
+          "height": 382
+        },
+        {
+          "id": "medical",
+          "y": 1730,
+          "height": 624
+        },
+        {
+          "id": "about",
+          "y": 2354,
+          "height": 402
+        },
+        {
+          "id": "staff",
+          "y": 2756,
+          "height": 1005
+        },
+        {
+          "id": "faq",
+          "y": 3761,
+          "height": 430
+        },
+        {
+          "id": "access",
+          "y": 4191,
+          "height": 477
+        }
+      ],
+      "navigation": {
+        "toggleVisible": false,
+        "initialCollapsed": false
+      },
+      "copyMatchesManuscript": true,
+      "pendingClickDoesNotNavigate": true,
+      "platformFonts": [
+        {
+          "familyName": "Hiragino Kaku Gothic ProN",
+          "postScriptName": "HiraKakuProN-W3",
+          "isCustomFont": false,
+          "glyphCount": 79
+        }
+      ]
+    },
+    {
+      "viewport": 768,
+      "documentWidth": 768,
+      "height": 7711,
+      "horizontalOverflow": false,
+      "overflowingText": [],
+      "smallTargets": [],
+      "brokenImages": [],
+      "distortedImages": [],
+      "pendingLinksValid": true,
+      "internalLinksValid": true,
+      "realMapAbsent": true,
+      "columns": {
+        "medical": "348px 348px",
+        "staff": "350px 350px"
+      },
+      "sections": [
+        {
+          "id": "hero",
+          "y": 72,
+          "height": 447
+        },
+        {
+          "id": "hours",
+          "y": 519,
+          "height": 686
+        },
+        {
+          "id": "news",
+          "y": 1205,
+          "height": 493
+        },
+        {
+          "id": "message",
+          "y": 1698,
+          "height": 691
+        },
+        {
+          "id": "medical",
+          "y": 2389,
+          "height": 1178
+        },
+        {
+          "id": "about",
+          "y": 3566,
+          "height": 714
+        },
+        {
+          "id": "staff",
+          "y": 4280,
+          "height": 1781
+        },
+        {
+          "id": "faq",
+          "y": 6061,
+          "height": 488
+        },
+        {
+          "id": "access",
+          "y": 6549,
+          "height": 899
+        }
+      ],
+      "navigation": {
+        "toggleVisible": true,
+        "initialCollapsed": true,
+        "noScriptFallback": true,
+        "keyboardOpens": true,
+        "openMenuFits": true,
+        "escapeCloses": true,
+        "selectionCloses": true
+      },
+      "copyMatchesManuscript": true,
+      "pendingClickDoesNotNavigate": true,
+      "platformFonts": [
+        {
+          "familyName": "Hiragino Kaku Gothic ProN",
+          "postScriptName": "HiraKakuProN-W3",
+          "isCustomFont": false,
+          "glyphCount": 79
+        }
+      ]
+    },
+    {
+      "viewport": 390,
+      "documentWidth": 390,
+      "height": 9930,
+      "horizontalOverflow": false,
+      "overflowingText": [],
+      "smallTargets": [],
+      "brokenImages": [],
+      "distortedImages": [],
+      "pendingLinksValid": true,
+      "internalLinksValid": true,
+      "realMapAbsent": true,
+      "columns": {
+        "medical": "350px",
+        "staff": "350px"
+      },
+      "sections": [
+        {
+          "id": "hero",
+          "y": 132,
+          "height": 417
+        },
+        {
+          "id": "hours",
+          "y": 549,
+          "height": 775
+        },
+        {
+          "id": "medical",
+          "y": 1325,
+          "height": 2279
+        },
+        {
+          "id": "news",
+          "y": 3604,
+          "height": 680
+        },
+        {
+          "id": "access",
+          "y": 4284,
+          "height": 802
+        },
+        {
+          "id": "message",
+          "y": 5086,
+          "height": 551
+        },
+        {
+          "id": "about",
+          "y": 5637,
+          "height": 612
+        },
+        {
+          "id": "staff",
+          "y": 6249,
+          "height": 2401
+        },
+        {
+          "id": "faq",
+          "y": 8649,
+          "height": 837
+        }
+      ],
+      "navigation": {
+        "toggleVisible": true,
+        "initialCollapsed": true,
+        "noScriptFallback": true,
+        "keyboardOpens": true,
+        "openMenuFits": true,
+        "escapeCloses": true,
+        "selectionCloses": true
+      },
+      "copyMatchesManuscript": true,
+      "pendingClickDoesNotNavigate": true,
+      "platformFonts": [
+        {
+          "familyName": "Hiragino Kaku Gothic ProN",
+          "postScriptName": "HiraKakuProN-W3",
+          "isCustomFont": false,
+          "glyphCount": 79
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,243 @@
+/* =========================================================
+   佐藤医院 下層ページ用スタイル
+   style.css（トップページ）の後に読み込む。
+   ヘッダー・フッター・ボタン・診療時間表などは style.css をそのまま使い、
+   ここには下層ページだけで使う部品を足しています。
+   ========================================================= */
+
+:root {
+  /* 白地の文字にも、白抜き文字の背景にも使える濃さ（白とのコントラスト 4.9:1）。
+     style.css の --color-brand（#2e8b7f）は白と 4.1:1 で、本文サイズの文字には足りないため */
+  --color-brand-strong: #287d72;
+  --color-field-line: #b9c8c4;
+  --color-photo: #dfe3e2;
+  --space-section: clamp(3rem, 6vw, 5rem);
+}
+
+/* ---------- 共通：現在地の表示 ---------- */
+.primary-nav a[aria-current="page"],
+.footer-nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: .4em;
+}
+.primary-nav a[aria-current="page"] { color: var(--color-heading); }
+
+/* ---------- 共通：ページ見出し帯 ---------- */
+.page-header { padding-block: 2.5rem 3.25rem; background: var(--color-surface); }
+.breadcrumb ol { display: flex; flex-wrap: wrap; gap: .25rem .625rem; margin: 0; padding: 0; list-style: none; color: var(--color-muted); font-size: .9375rem; line-height: 1.6; }
+.breadcrumb li + li::before { content: ">"; content: ">" / ""; margin-right: .625rem; }
+.breadcrumb a { text-decoration: underline; text-decoration-color: rgb(90 105 102 / 45%); text-underline-offset: .25em; }
+.breadcrumb a:hover { color: var(--color-heading); text-decoration-color: currentColor; }
+.page-header .eyebrow { margin-top: 1.25rem; }
+/* ページ見出しはトップの .section-title と同じ大きさ・色（h1 に両方のクラスを付けている） */
+.page-title { margin-top: .125rem; }
+
+.page-body { padding-block: var(--space-section); }
+.page-body--tight-bottom { padding-bottom: 2.5rem; }
+.lead { max-width: 62rem; font-size: 1.0625rem; line-height: 1.9; }
+.text-block p + p { margin-top: 1rem; }
+
+/* 写真の仮枠。支給画像が決まったら <img> に差し替える（比率は --ratio で指定） */
+.photo-slot {
+  display: grid; place-items: center; width: 100%; aspect-ratio: var(--ratio, 3 / 2);
+  padding: 1rem; border-radius: .875rem; background: var(--color-photo);
+  color: var(--color-muted); font-size: .875rem; line-height: 1.5; text-align: center;
+}
+.photo-slot--round-lg { border-radius: 1.25rem; }
+img.photo { width: 100%; aspect-ratio: var(--ratio, 3 / 2); object-fit: cover; border-radius: .875rem; }
+
+/* ---------- 院長あいさつ ---------- */
+.message-page { display: grid; grid-template-columns: minmax(0, 430fr) minmax(0, 710fr); gap: clamp(1.5rem, 4vw, 3.25rem); align-items: start; }
+.message-page .photo-slot { --ratio: 1 / 1; }
+.message-page-text p { line-height: 1.95; }
+.message-page-text p + p { margin-top: 1rem; }
+.message-page-signature { margin-top: 1.75rem; font-size: 1.25rem; font-weight: 700; line-height: 1.4; text-align: right; }
+
+/* ---------- ご予約・ご相談 ---------- */
+.tel-box { margin-top: 2.5rem; padding: 2rem 2.5rem; border-radius: 1rem; background: var(--color-surface); }
+.tel-box h2 { font-size: 1.25rem; font-weight: 700; line-height: 1.4; }
+.tel-box-number { display: inline-flex; align-items: baseline; gap: .75rem; margin-top: .5rem; color: var(--color-brand-strong); font: 700 2.25rem/1.25 var(--font-heading); letter-spacing: .04em; }
+.tel-box-number span { font: 700 .875rem/1 var(--font-english); letter-spacing: .2em; }
+.tel-box-number:hover { text-decoration: underline; text-underline-offset: .15em; }
+.info-rows { margin-top: .75rem; }
+.info-rows > div { display: flex; flex-wrap: wrap; column-gap: .25rem; }
+.info-rows > div + div { margin-top: .25rem; }
+.info-rows dt::after { content: "："; }
+.nowrap { white-space: nowrap; }
+
+.form-section { margin-top: 4.5rem; }
+.form-section > h2 { padding-bottom: 1.5rem; border-bottom: 2px solid var(--color-brand); font-size: 1.5rem; font-weight: 700; line-height: 1.4; }
+.form-note { margin-top: 1rem; color: var(--color-muted); font-size: .9375rem; }
+.form-row { display: grid; grid-template-columns: 18rem minmax(0, 1fr); align-items: center; gap: .75rem 2rem; padding-block: 1.25rem; border-bottom: 1px solid var(--color-line); }
+.form-row--top { align-items: start; }
+.form-row--top .form-label { padding-top: .75rem; }
+.form-label { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem .625rem; font-size: 1.125rem; font-weight: 700; line-height: 1.5; }
+.required { display: inline-block; padding: .125rem .5rem; border-radius: .25rem; background: var(--color-brand-strong); color: #fff; font-size: .8125rem; font-weight: 700; line-height: 1.5; letter-spacing: .05em; }
+.field {
+  width: 100%; min-height: 3.75rem; padding: .75rem 1rem;
+  border: 1px solid var(--color-field-line); border-radius: .375rem; background: #fff;
+  color: var(--color-text); font: inherit; font-size: 1.0625rem; line-height: 1.5;
+}
+.field::placeholder { color: #6b7875; opacity: 1; }
+.field:hover { border-color: var(--color-brand); }
+.field:focus-visible { outline: 3px solid var(--color-heading); outline-offset: 2px; border-color: var(--color-brand); }
+select.field {
+  appearance: none; padding-right: 3rem; cursor: pointer;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 10'%3E%3Cpath d='M0 0h12L6 10z' fill='%23287d72'/%3E%3C/svg%3E") no-repeat right 1.25rem center / .75rem;
+}
+textarea.field { min-height: 10rem; resize: vertical; }
+.choice-group { display: flex; flex-wrap: wrap; gap: .25rem 2.25rem; }
+.choice { display: inline-flex; align-items: center; gap: .625rem; min-height: 3rem; font-size: 1.0625rem; cursor: pointer; }
+.choice input { width: 1.375rem; height: 1.375rem; margin: 0; accent-color: var(--color-brand-strong); cursor: pointer; }
+.date-group { display: flex; flex-wrap: wrap; gap: .75rem; }
+.date-group input { width: 16.25rem; max-width: 100%; }
+.date-group select { width: 12.5rem; max-width: 100%; }
+.form-agree { margin-top: 3.5rem; text-align: center; }
+.form-agree > p { color: var(--color-muted); }
+.form-agree .choice { justify-content: center; margin-top: .75rem; }
+.submit-button {
+  display: flex; justify-content: center; align-items: center; width: min(100%, 20rem); min-height: 3.625rem;
+  margin: 1.25rem auto 0; border: 0; border-radius: 999px; background: var(--color-brand-strong);
+  color: #fff; font-size: 1.125rem; font-weight: 700; letter-spacing: .1em; cursor: pointer;
+}
+.submit-button:is(:hover, :focus-visible) { background: var(--color-heading); }
+.submit-button:active { background: #194f47; }
+.form-after { max-width: 47rem; margin: 2rem auto 0; color: var(--color-muted); }
+
+/* ---------- お知らせ ---------- */
+.news-archive { border-top: 2px solid var(--color-brand); }
+.news-entry { padding-block: 2rem; border-bottom: 1px solid var(--color-line); scroll-margin-top: 1.5rem; }
+.news-entry h2 { font-size: 1.25rem; font-weight: 700; line-height: 1.5; }
+.news-entry p { max-width: 48rem; margin-top: .75rem; line-height: 1.9; }
+.news-entry:target { box-shadow: inset 4px 0 0 var(--color-brand); padding-left: 1.25rem; }
+
+/* ---------- 診療内容 ---------- */
+.medical-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.25rem 1.5rem; margin-top: 2.5rem; }
+.medical-entry { min-width: 0; padding: 1.25rem 1.25rem 2rem; border: 1px solid var(--color-line); border-radius: 1.25rem; background: #fff; scroll-margin-top: 1.5rem; }
+.medical-entry .photo-slot { --ratio: 504 / 221; }
+.medical-entry h2 { margin-top: 1rem; font-size: 1.25rem; font-weight: 700; line-height: 1.5; }
+.medical-entry h2 .num { display: block; margin-bottom: .375rem; color: var(--color-brand-strong); font: 700 1rem/1.4 var(--font-english); letter-spacing: .08em; }
+.medical-entry p { margin-top: .75rem; line-height: 1.85; }
+
+/* ---------- 当院について ---------- */
+.band { padding-block: var(--space-section); }
+.band--tint { background: var(--color-surface); }
+.split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(1.5rem, 4vw, 3.25rem); }
+.split + .split { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
+.split--wide-media { grid-template-columns: minmax(0, 4fr) minmax(0, 5fr); }
+.split--reverse > .split-media { order: -1; }
+.split--reverse.split--wide-media { grid-template-columns: minmax(0, 5fr) minmax(0, 4fr); }
+.split-text h2 { font-size: 1.375rem; font-weight: 700; line-height: 1.5; }
+.split-text h2 + p { margin-top: .75rem; }
+.split-text p { line-height: 1.9; }
+.split-text h3 { margin-top: 1.5rem; color: var(--color-brand-strong); font-size: 1.125rem; font-weight: 700; line-height: 1.5; }
+.split-text h3 + p { margin-top: .375rem; }
+.split-media { display: grid; gap: 1.25rem; }
+.split-text .photo-slot { margin-top: 1.5rem; }
+
+.policy { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); align-items: center; gap: clamp(1.5rem, 4vw, 3rem); margin-top: 2rem; }
+.policy .photo-slot { --ratio: 4 / 5; }
+.policy-list { margin: 0; padding: 0; list-style: none; border: 1px solid var(--color-line); border-radius: .875rem; background: #fff; }
+.policy-list li { display: grid; grid-template-columns: 1.5rem minmax(0, 14rem) minmax(0, 1fr); align-items: baseline; gap: .25rem 1rem; padding: 1rem 1.25rem; }
+.policy-list li + li { border-top: 1px solid var(--color-line); }
+.policy-num { color: var(--color-brand-strong); font: 700 1rem/1.4 var(--font-english); }
+.policy-list strong { font-size: 1.0625rem; line-height: 1.5; }
+.policy-list span:last-child { color: var(--color-text); line-height: 1.6; }
+
+.staff-page-intro { max-width: 40rem; margin-top: 1.25rem; }
+.staff-page-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-top: 2rem; }
+.staff-page-card { display: grid; grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr); align-items: start; gap: 1.25rem; padding: 1.5rem; border-radius: 1rem; background: #fff; }
+.staff-page-card .photo-slot { --ratio: 4 / 5; grid-row: span 2; }
+.staff-page-card h3 { margin-top: .125rem; font-size: 1.375rem; font-weight: 700; line-height: 1.4; letter-spacing: .08em; }
+.staff-page-card .staff-details { margin-top: .75rem; font-size: 1rem; line-height: 1.75; }
+
+/* ---------- よくあるご質問 ---------- */
+.faq-category { margin-top: 3rem; }
+.faq-category > h2 { color: var(--color-brand-strong); font-size: 1.25rem; font-weight: 700; line-height: 1.5; }
+.faq-item { padding-block: 1.5rem; border-bottom: 1px solid var(--color-line); scroll-margin-top: 1.5rem; }
+.faq-item:target { box-shadow: inset 4px 0 0 var(--color-brand); padding-left: 1.25rem; }
+.faq-q, .faq-a { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); align-items: start; gap: .75rem; }
+.faq-q h3 { font-size: 1.1875rem; font-weight: 700; line-height: 1.55; }
+.faq-a { margin-top: .625rem; }
+.faq-a p { max-width: 48rem; line-height: 1.85; }
+.qa-mark { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; margin-top: .0625rem; border-radius: 50%; font: 700 .8125rem/1 var(--font-english); }
+.qa-mark--q { background: var(--color-brand-strong); color: #fff; }
+.qa-mark--a { border: 1px solid var(--color-line); background: #fff; color: var(--color-brand-strong); }
+.faq-closing { margin-top: 2.5rem; }
+
+/* ---------- 送信完了 ---------- */
+.complete { text-align: center; }
+.complete-icon { display: grid; place-items: center; width: 4rem; height: 4rem; margin-inline: auto; border-radius: 50%; background: var(--color-surface); color: var(--color-brand-strong); }
+.complete-icon svg { width: 1.75rem; height: 1.75rem; stroke-width: 2.4; }
+.complete h2 { margin-top: 1.25rem; font: 700 1.75rem/1.4 var(--font-heading); letter-spacing: .08em; }
+.complete-lead { margin-top: .75rem; }
+.complete-box { max-width: 55rem; margin: 2rem auto 0; padding: 2rem; border-radius: 1rem; background: var(--color-surface); text-align: left; }
+.complete-box h3 { font-size: 1.25rem; font-weight: 700; line-height: 1.5; }
+.complete-box h3 + p { margin-top: .5rem; }
+.complete-box-note { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--color-line); }
+.complete-box-note strong { color: var(--color-brand-strong); font-weight: 700; }
+.complete-box-note strong + p, .complete-box-note p + p { margin-top: .5rem; }
+.complete-contact { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 2rem; max-width: 55rem; margin: 2.5rem auto 0; text-align: left; }
+.complete-contact-tel { padding-right: 2rem; border-right: 1px solid var(--color-line); }
+.complete-contact-tel p { font-weight: 700; }
+.big-tel { display: inline-flex; align-items: center; gap: .75rem; margin-top: .25rem; color: var(--color-brand-strong); font: 700 2rem/1.25 var(--font-heading); letter-spacing: .04em; }
+.big-tel svg { width: 1.75rem; height: 1.75rem; }
+.big-tel:hover { text-decoration: underline; text-underline-offset: .15em; }
+.complete .button { margin-top: 2.5rem; }
+
+/* ---------- 診療時間・所在地 ---------- */
+.info-block { margin-top: 3.5rem; }
+.info-block > h2 { padding-left: .875rem; border-left: 4px solid var(--color-brand); font-size: 1.375rem; font-weight: 700; line-height: 1.5; }
+.info-block .hours-table { max-width: 48rem; }
+.dot-list { margin-top: 1rem; }
+.dot-list li { position: relative; padding-left: 1.25em; }
+.dot-list li + li { margin-top: .25rem; }
+.dot-list li::before { content: "・"; position: absolute; left: 0; }
+.dot-list + p { margin-top: 1rem; }
+.access-page-grid { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; gap: 2rem; margin-top: 1.25rem; }
+.access-page-grid .map-placeholder { display: grid; place-items: center; color: var(--color-muted); font-size: .875rem; }
+.dot-list a { color: var(--color-heading); text-decoration: underline; text-underline-offset: .2em; }
+
+/* ---------- タブレット ---------- */
+@media (max-width: 53.75rem) {
+  .message-page { grid-template-columns: minmax(0, 1fr); }
+  .message-page .photo-slot, .message-page img { max-width: 26rem; }
+  .form-row { grid-template-columns: minmax(0, 1fr); gap: .625rem; }
+  .form-row--top .form-label { padding-top: 0; }
+  .split, .split--wide-media, .split--reverse.split--wide-media, .policy { grid-template-columns: minmax(0, 1fr); }
+  .split--reverse > .split-media { order: 0; }
+  .policy .photo-slot { --ratio: 3 / 2; }
+  .policy-list li { grid-template-columns: 1.5rem minmax(0, 1fr); }
+  .policy-list span:last-child { grid-column: 2; }
+  .staff-page-grid { grid-template-columns: minmax(0, 1fr); }
+  .complete-contact { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+  .complete-contact-tel { padding: 0 0 1.25rem; border-right: 0; border-bottom: 1px solid var(--color-line); }
+  .access-page-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- スマートフォン ---------- */
+@media (max-width: 37.5rem) {
+  .page-header { padding-block: 1.75rem 2.25rem; }
+  .page-header .eyebrow { margin-top: 1rem; }
+  .lead { font-size: 1rem; }
+  .tel-box { padding: 1.5rem 1.25rem; }
+  .tel-box-number { font-size: 1.875rem; }
+  .form-section { margin-top: 3rem; }
+  .form-section > h2 { font-size: 1.3125rem; padding-bottom: 1rem; }
+  .form-label { font-size: 1.0625rem; }
+  .date-group input, .date-group select { width: 100%; }
+  .form-agree { text-align: left; }
+  .form-agree .choice { justify-content: flex-start; }
+  .medical-index { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .medical-entry { padding: 1rem 1rem 1.5rem; }
+  .staff-page-card { grid-template-columns: minmax(0, 7rem) minmax(0, 1fr); padding: 1.25rem; gap: 1rem; }
+  .staff-page-card { align-items: center; }
+  .staff-page-card .photo-slot { grid-row: auto; }
+  .staff-page-card .staff-details { grid-column: 1 / -1; margin-top: 0; }
+  .faq-q h3 { font-size: 1.0625rem; }
+  .complete h2 { font-size: 1.375rem; }
+  .complete-box { padding: 1.5rem 1.25rem; }
+  .big-tel { font-size: 1.75rem; }
+  .info-block { margin-top: 2.5rem; }
+}
