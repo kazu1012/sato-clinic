@@ -418,3 +418,7 @@ address { font-style: normal; }
 @media (max-width: 37.5rem) {
   .message-actions { align-items: flex-end; }
 }
+
+/* ロゴ：画面幅が変わっても今の大きさ（134×40px）より小さくしない（2026-11） */
+.brand { min-width: 8.375rem; }
+.brand img { min-width: 8.375rem; min-height: 2.5rem; }
