@@ -422,3 +422,22 @@ address { font-style: normal; }
 /* ロゴ：画面幅が変わっても今の大きさ（134×40px）より小さくしない（2026-11） */
 .brand { min-width: 8.375rem; }
 .brand img { min-width: 8.375rem; min-height: 2.5rem; }
+
+/* =========================================================
+   トップのメインビジュアル下の見出し（タブレット・スマホだけ。2026-11）
+   ・デスクトップ（1181px 以上）は画像の焼き込み文字を見せ、HTML の見出しは読み上げ用に隠しているため、見た目は変えない
+   ・「sato clinic」はデスクトップでは非表示（読み上げも「佐藤医院」のまま）
+   ========================================================= */
+.hero-clinic-en { display: none; }
+@media (max-width: 73.75rem) {
+  /* 病院名：「佐藤医院」を隠し「sato clinic」を表示（文字サイズ・太さ・色・余白は .hero-clinic のまま） */
+  .hero-clinic-ja { display: none; }
+  .hero-clinic-en { display: inline; }
+  /* 見出し：約5px大きく（33〜45px）・黒。ページ内で一番大きな文字にする */
+  .hero-copy h1 { font-size: clamp(2.0625rem, calc(4vw + .3125rem), 2.8125rem); color: #000; }
+  /* 折り返すときは「地域に根ざした」と「医療」の間でだけ改行する */
+  .hero-title-part { display: inline-block; }
+}
+@media (max-width: 37.5rem) {
+  .hero-copy h1 { font-size: 2.0625rem; } /* 33px */
+}
