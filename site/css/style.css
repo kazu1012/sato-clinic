@@ -641,3 +641,39 @@ address { font-style: normal; }
 @media (min-width: 73.8125rem) and (max-width: 79.9375rem) {
   .site-header { column-gap: clamp(1.25rem, calc(1.25rem + (100vw - 73.8125rem) * .1874), 3vw); }
 }
+
+/* ===== 色の統一（全版・全ページ。2026-11） ===== */
+/* 1. ページの地を、ごく薄いグレーにする（真っ白のまぶしさを抑える）。ヘッダーは今までどおり白 */
+:root { --color-page: #f6f7f6; }
+body { background: var(--color-page); }
+.site-header { background: #fff; }
+
+/* 2. トップ「診療内容」：薄い緑の帯にする。カードは白のまま */
+.medical { padding-top: 2rem; padding-bottom: 2rem; background: var(--color-surface); }
+
+/* 3. トップ「スタッフ紹介」：薄い緑の帯にする。カードは白のまま。
+      見出しの囲みは帯と同じ色になるので外し、見出しの左端をカードの左端にそろえる */
+.staff { padding-top: 2rem; padding-bottom: 2rem; background: var(--color-surface); }
+.staff-heading { padding-left: 0; padding-right: 0; background: transparent; }
+
+/* 4. 下層「診療内容」ページ：カードの一覧を、薄い緑の角丸の面にのせる */
+.page-body .medical-index { padding: 1.5rem; border-radius: 1.25rem; background: var(--color-surface); }
+
+@media (max-width: 37.5rem) {
+  .medical, .staff { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+  .page-body .medical-index { margin-inline: calc(var(--page-gutter) * -.5); padding: 1rem .75rem; }
+}
+
+/* 5. 緑の帯が4つ続かないよう、トップ「当院について」「よくあるご質問」の帯の色を外す（ページの地の色になる） */
+.about, .faq { background: transparent; }
+
+/* 6. 緑の面の上の白いカードに、ごく弱い影をつける（輪郭をはっきりさせる） */
+.medical-card, .staff-card, .medical-entry, .staff-page-card, .policy-list {
+  box-shadow: 0 1px 2px rgb(8 96 47 / 4%), 0 6px 18px rgb(8 96 47 / 6%);
+}
+
+/* 7. 下層ページの最後が緑の帯のとき（「当院について」ページ）、緑のフッターとくっつかないよう、間にページの地の色をはさむ */
+main > .band--tint:last-child { margin-bottom: 2.5rem; }
+@media (max-width: 37.5rem) {
+  main > .band--tint:last-child { margin-bottom: 2rem; }
+}
