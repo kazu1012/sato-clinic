@@ -601,3 +601,17 @@ address { font-style: normal; }
     .hero-facts > .hero-fact-tel + div + div { grid-column: 2; }
   }
 }
+
+/* 電話番号の行：とても狭い画面（299px 以下）では、番号を下の段に回して横にはみ出さないようにする（2026-11） */
+@media (max-width: 18.6875rem) {
+  .hero-facts > .hero-fact-tel { grid-template-columns: 2.25rem minmax(0, 1fr) 1rem; grid-template-rows: auto auto; column-gap: .5rem; row-gap: .375rem; align-items: center; }
+  .hero-fact-tel::before { grid-row: 1; width: 2.25rem; height: 2.25rem; background-size: 1rem; }
+  .hero-fact-tel::after { grid-row: 1; }
+  .hero-fact-tel dt { grid-row: 1; }
+  .hero-fact-tel dd { grid-column: 1 / -1; grid-row: 2; }
+  .hero-tel-number { white-space: normal; font-size: clamp(1rem, 7.5vw, 1.1875rem); }
+}
+@media (max-width: 18.6875rem) {
+  /* 休診日・最寄駅も、項目名の下に内容を置く */
+  .hero-facts > div:not(.hero-fact-tel) { grid-template-columns: minmax(0, 1fr); gap: .125rem; }
+}
