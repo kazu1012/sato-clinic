@@ -861,3 +861,10 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 
 /* 医療事務（jimu1_up.jpg）：顔の大きさを看護師長・臨床検査技師にそろえるため、寄せて切り出した写真に変更 */
 .staff-profile img.staff-portrait--jimu { object-position: 50% 6%; }
+
+/* ===== よくあるご質問（トップ）：1行の高さを、お知らせと同じにする（全版） ===== */
+/* お知らせは「行の高さ＋下線1px」、よくあるご質問は下線が行の高さに含まれるため、1px 足してそろえる */
+.faq-list a { min-height: calc(3.625rem + 1px); }
+@media (max-width: 37.5rem) {
+  .faq-list a { min-height: calc(3.5rem + 1px); }
+}
