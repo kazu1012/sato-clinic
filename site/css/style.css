@@ -819,3 +819,45 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 .staff-profile img:is(.staff-portrait--gishi, .staff-portrait--jimu) { object-fit: cover; }
 .staff-profile img.staff-portrait--gishi { object-position: 50% 3%; }
 .staff-profile img.staff-portrait--jimu { object-position: 50% 14%; }
+
+/* ===== お問い合わせカード 調整2：高さを低く・イラストを小さく・見出しを所在地と同じ大きさに・英字を大文字に（全版） ===== */
+.access-grid .contact-content { padding: 1.375rem 1.5rem 1.75rem; }
+.access-grid .contact-content::after { height: 2.25rem; }
+.access-grid .contact-head { gap: .75rem; padding-bottom: .5rem; margin-bottom: 1rem; }
+.access-grid .contact-head-icon { width: 2.5rem; height: 1.875rem; }
+.access-grid .contact-head > div { padding-left: .75rem; }
+.access-grid .contact-title, .access-grid .contact-address-title { font-size: 1.375rem; line-height: 1.35; }
+.access-grid .contact-eyebrow { font-size: .8125rem; letter-spacing: .14em; text-transform: uppercase; }
+.access-grid .contact-links { gap: .625rem; }
+.access-grid .contact-content a.contact-phone, .access-grid .contact-content a.contact-email { min-height: 3.5rem; padding-block: .5rem; }
+.access-grid .contact-phone .contact-link-value { font-size: 1.5rem; }
+.access-grid .contact-fax { margin-top: .75rem; }
+.access-grid .contact-fax-pill { padding-block: .375rem; }
+/* イラスト：左右いっぱいをやめて、中央に小さく。左右の端はぼかして地になじませる */
+.access-grid .contact-illust { width: min(78%, 20rem); margin: .375rem auto .25rem;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent); }
+.access-grid .contact-address { gap: .5rem; margin-top: .375rem; }
+.access-grid .contact-chips { gap: .375rem; }
+.access-grid .contact-chips li { min-height: 2.5rem; padding-block: .25rem; }
+@media (max-width: 37.5rem) {
+  .access-grid .contact-content { padding: 1.125rem 1rem 1.5rem; }
+  .access-grid .contact-phone .contact-link-value { font-size: 1.375rem; }
+  .access-grid .contact-illust { width: min(86%, 18rem); }
+}
+@media (max-width: 22.4375rem) {
+  .access-grid .contact-content { padding-inline: .875rem; }
+  .access-grid .contact-head-icon { width: 2.125rem; height: 1.625rem; }
+  .access-grid .contact-phone .contact-link-value { font-size: 1.25rem; }
+}
+@media (max-width: 18.6875rem) {
+  .access-grid .contact-title, .access-grid .contact-address-title { font-size: 1.25rem; }
+  .access-grid .contact-phone .contact-link-value { font-size: 1.125rem; }
+}
+/* 299px 以下：電話番号を 15px に戻して、緑のボタンからはみ出さないように（調整2の 1.125rem を上書き） */
+@media (max-width: 18.6875rem) {
+  .access-grid .contact-phone .contact-link-value { font-size: .9375rem; }
+}
+
+/* 医療事務（jimu1_up.jpg）：顔の大きさを看護師長・臨床検査技師にそろえるため、寄せて切り出した写真に変更 */
+.staff-profile img.staff-portrait--jimu { object-position: 50% 6%; }
