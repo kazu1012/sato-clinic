@@ -435,7 +435,7 @@ address { font-style: normal; }
   .hero-clinic-en { display: inline; }
   /* 見出し：約5px大きく（33〜45px）・黒。ページ内で一番大きな文字にする */
   .hero-copy h1 { font-size: clamp(2.0625rem, calc(4vw + .3125rem), 2.8125rem); color: #000; }
-  /* 折り返すときは「地域に根ざした」と「医療」の間でだけ改行する */
+  /* 折り返すときは「地域に」と「根ざした医療」の間でだけ改行する */
   .hero-title-part { display: inline-block; }
 }
 @media (max-width: 37.5rem) {
@@ -618,4 +618,26 @@ address { font-style: normal; }
 /* 300px 以上では、番号の <wbr> で折り返さないようにする（white-space: nowrap でも Chrome は <wbr> で折り返すため） */
 @media (min-width: 18.75rem) {
   .hero-tel-number wbr { display: none; }
+}
+
+/* ロゴを1.3倍にする（134×40px → 174×52px。全幅・全ページ。2026-11） */
+.site-header { grid-template-columns: 10.875rem minmax(0, 1fr) auto; }
+.brand { max-width: 10.875rem; min-width: 10.875rem; }
+.brand img { max-height: 3.25rem; min-width: 10.875rem; min-height: 3.25rem; }
+@media (max-width: 73.75rem) {
+  .site-header { grid-template-columns: 10.875rem minmax(0, 1fr) auto; }
+}
+@media (max-width: 37.5rem) {
+  .site-header { grid-template-columns: minmax(0, 1fr) auto; }
+}
+
+/* デスクトップの狭い幅（1181〜1279px）：ボタンを狭くして、メニューの項目の間を広げる */
+@media (min-width: 73.8125rem) and (max-width: 79.9375rem) {
+  .header-actions .header-tel { min-inline-size: 0; padding-inline: .875rem; font-size: 1.0625rem; letter-spacing: .02em; }
+  .header-actions .header-reservation { padding-inline: .875rem; }
+}
+/* デスクトップの狭い幅（1181〜1279px）：ヘッダーの列の間隔を、1181px で 20px、1279px で元の値（画面幅の3%）になるよう少しずつ広げる。
+   1181px 付近でメニューの項目の間を約15px確保し、1280px との境目で間隔が急に変わらないようにする（2026-11） */
+@media (min-width: 73.8125rem) and (max-width: 79.9375rem) {
+  .site-header { column-gap: clamp(1.25rem, calc(1.25rem + (100vw - 73.8125rem) * .1874), 3vw); }
 }
