@@ -677,3 +677,145 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 @media (max-width: 37.5rem) {
   main > .band--tint:last-child { margin-bottom: 2rem; }
 }
+
+/* ===== アクセス：地図の右の「お問い合わせ」カードを mapsidePoster.png の見た目に（全版） ===== */
+/* 地図とカードの並び：デスクトップはカードを広く（480px）、地図はカードの高さに合わせる */
+@media (min-width: 73.8125rem) {
+  .access-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 30rem); align-items: stretch; }
+}
+@media (min-width: 53.8125rem) {
+  .access-grid .map-embed { height: 100%; min-height: 21rem; aspect-ratio: auto; }
+}
+.access-grid .contact-content {
+  position: relative; overflow: hidden; isolation: isolate; gap: 0;
+  padding: 1.75rem 1.75rem 2.25rem; border: 1px solid #cfe9d8; border-radius: 1.25rem;
+  background: #fff; box-shadow: 0 1px 2px rgb(8 96 47 / 4%), 0 6px 18px rgb(8 96 47 / 6%);
+}
+/* 下の端のゆるい波 */
+.access-grid .contact-content::after { content: ""; position: absolute; z-index: -1; left: 0; right: 0; bottom: 0; height: 2.75rem; pointer-events: none;
+  background: no-repeat 0 0 / 100% 100% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1000 120' preserveAspectRatio='none'%3E%3Cpath d='M0 60C300 115 650 95 1000 25V120H0Z' fill='%23eef7f1'/%3E%3Cpath d='M300 120C580 104 820 80 1000 50V120Z' fill='%23d4eedd'/%3E%3C/svg%3E"); }
+/* 右上の葉（飾り） */
+.contact-leaves { position: absolute; z-index: -1; top: 0; right: 0; width: min(46%, 15rem); height: auto; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to left, #000 55%, transparent), linear-gradient(to top, transparent, #000 35%); -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to left, #000 55%, transparent), linear-gradient(to top, transparent, #000 35%); mask-composite: intersect; }
+/* 見出し：人のアイコン｜Contact／お問い合わせ */
+.contact-head { display: flex; align-items: center; gap: 1rem; padding-bottom: .75rem; margin-bottom: 1.25rem; background: linear-gradient(90deg, #7fd39f, #c6ebd2 70%, transparent) no-repeat left bottom / 75% 2px; }
+.contact-head-icon { width: 3.5rem; height: 2.625rem; color: var(--color-brand); stroke-width: 2.6; }
+.contact-head > div { padding-left: 1rem; border-left: 1px solid #b2dbc0; }
+.contact-eyebrow { color: var(--color-brand); font: 600 .9375rem/1.4 var(--font-english); letter-spacing: .12em; }
+.access-grid .contact-title { color: var(--color-text); font-size: clamp(1.625rem, 1.3rem + .8vw, 2rem); line-height: 1.3; }
+/* 電話・メール */
+.contact-links { display: grid; gap: .75rem; }
+.access-grid .contact-content a.contact-phone, .access-grid .contact-content a.contact-email {
+  display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); align-items: center; gap: .875rem;
+  min-height: 4.25rem; padding: .625rem 1rem; border-radius: 1rem; text-align: left; font-size: 1rem; }
+.access-grid .contact-content a.contact-phone { border: 0; color: #fff; background: linear-gradient(100deg, #12a058 0%, #0b7a3e 55%, #08602f 100%); box-shadow: 0 4px 12px rgb(8 96 47 / 18%); }
+.access-grid .contact-content a.contact-phone:is(:hover, :focus-visible) { background: #08602f; }
+.access-grid .contact-content a.contact-email { border: 1px solid var(--color-brand); color: var(--color-heading); background: #fff; }
+.contact-links svg { width: 2rem; height: 2rem; }
+.contact-email svg { color: var(--color-brand-strong); }
+.contact-link-text { display: grid; padding-left: .875rem; border-left: 1px solid currentColor; line-height: 1.3; }
+.contact-phone .contact-link-text { border-left-color: rgb(255 255 255 / 70%); }
+.contact-email .contact-link-text { border-left-color: #8fceaa; }
+.contact-link-label { font-size: .875rem; font-weight: 700; }
+.contact-link-value { font-size: .9375rem; font-weight: 700; overflow-wrap: anywhere; }
+.contact-phone .contact-link-value { font-size: 1.625rem; letter-spacing: .02em; white-space: nowrap; overflow-wrap: normal; }
+/* FAX：両側に線、真ん中に薄い緑のピル */
+.access-grid .contact-fax { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; font-size: 1.0625rem; font-weight: 700; }
+.access-grid .contact-fax::before, .access-grid .contact-fax::after { content: ""; flex: 1 1 0; height: 1px; background: #b2dbc0; }
+.contact-fax-pill { display: inline-flex; align-items: center; gap: .75rem; padding: .5rem 1.25rem; border-radius: 999px; background: var(--color-surface); color: var(--color-text); white-space: nowrap; }
+.contact-fax-pill svg { width: 1.5rem; height: 1.5rem; color: var(--color-brand-strong); }
+.contact-fax-pill > span { padding-left: .75rem; border-left: 1px solid #8fceaa; }
+/* 建物のイラスト（カードの左右いっぱい） */
+.contact-illust { display: block; width: calc(100% + 3.5rem); max-width: none; height: auto; margin: .75rem -1.75rem 0; }
+/* 所在地 */
+.contact-address-head { display: flex; align-items: center; gap: .625rem; }
+.contact-address-head svg { width: 1.75rem; height: 1.75rem; color: var(--color-brand); }
+.contact-address-head .contact-eyebrow { padding-right: .75rem; border-right: 1px solid #b2dbc0; }
+.contact-address-title { margin: 0; color: var(--color-text); font-size: 1.375rem; font-weight: 700; line-height: 1.4; }
+.access-grid .contact-address { display: grid; gap: .75rem; margin-top: .5rem; font-style: normal; }
+.contact-postal { font-size: 1.125rem; font-weight: 500; }
+.contact-chips { display: grid; gap: .5rem; margin: 0; padding: 0; list-style: none; }
+.contact-chips li { display: flex; align-items: center; gap: .625rem; min-height: 2.75rem; padding: .375rem 1rem; border-radius: 999px; background: var(--color-surface); font-size: .9375rem; line-height: 1.4; }
+.contact-chips svg { width: 1.5rem; height: 1.5rem; color: var(--color-brand-strong); }
+/* スマホ */
+@media (max-width: 37.5rem) {
+  .access-grid .contact-content { padding: 1.25rem 1rem 2rem; }
+  .contact-illust { width: calc(100% + 2rem); margin-inline: -1rem; }
+  .contact-head-icon { width: 2.75rem; height: 2.0625rem; }
+  .contact-head { gap: .75rem; }
+  .contact-head > div { padding-left: .75rem; }
+  .access-grid .contact-content a.contact-phone, .access-grid .contact-content a.contact-email { grid-template-columns: 1.75rem minmax(0, 1fr); gap: .625rem; padding-inline: .875rem; }
+  .contact-links svg { width: 1.625rem; height: 1.625rem; }
+  .contact-link-text { padding-left: .625rem; }
+  .contact-phone .contact-link-value { font-size: 1.375rem; }
+  .contact-postal { font-size: 1rem; }
+}
+@media (max-width: 22.4375rem) {
+  .contact-fax-pill { padding-inline: .875rem; gap: .5rem; }
+  .contact-fax-pill > span { padding-left: .5rem; }
+  .contact-phone .contact-link-value { font-size: 1.25rem; }
+  .contact-chips li { padding-inline: .75rem; font-size: .875rem; }
+}
+.contact-nowrap { white-space: nowrap; }
+.contact-links { grid-template-columns: minmax(0, 1fr); }
+.contact-email .contact-link-value { font-size: 1.0625rem; }
+@media (max-width: 37.5rem) {
+  .contact-leaves { width: min(38%, 10rem); }
+  .contact-email .contact-link-value { font-size: .9375rem; }
+}
+@media (max-width: 22.4375rem) {
+  .access-grid .contact-content { padding-inline: .875rem; }
+  .contact-illust { width: calc(100% + 1.75rem); margin-inline: -.875rem; }
+  .contact-head-icon { width: 2.25rem; height: 1.6875rem; }
+  .contact-head { gap: .5rem; }
+  .contact-head > div { padding-left: .625rem; }
+  .access-grid .contact-title { font-size: 1.375rem; }
+  .access-grid .contact-content a.contact-phone, .access-grid .contact-content a.contact-email { grid-template-columns: 1.5rem minmax(0, 1fr); gap: .5rem; padding-inline: .625rem; }
+  .contact-links svg { width: 1.375rem; height: 1.375rem; }
+  .contact-link-text { padding-left: .5rem; }
+  .contact-email .contact-link-value { font-size: .875rem; }
+  .access-grid .contact-fax::before, .access-grid .contact-fax::after { display: none; }
+  .access-grid .contact-fax { justify-content: center; font-size: 1rem; }
+}
+@media (max-width: 18.6875rem) {
+  .contact-phone .contact-link-value { font-size: 1.125rem; }
+  .contact-fax-pill { padding-inline: .625rem; font-size: .9375rem; }
+}
+@media (max-width: 18.6875rem) {
+  .contact-head-icon { display: none; }
+  .contact-head > div { padding-left: 0; border-left: 0; }
+  .access-grid .contact-title { font-size: 1.25rem; }
+  .contact-address-head { flex-wrap: wrap; row-gap: 0; }
+  .contact-address-head .contact-eyebrow { padding-right: 0; border-right: 0; }
+  .contact-address-title { width: 100%; }
+  .contact-postal { font-size: .875rem; }
+  .contact-chips li { gap: .375rem; padding-inline: .625rem; font-size: .8125rem; }
+  .contact-chips svg { width: 1.25rem; height: 1.25rem; }
+  .contact-chips .contact-nowrap { white-space: normal; }
+}
+@media (max-width: 37.5rem) {
+  .access-grid .contact-fax::before, .access-grid .contact-fax::after { display: none; }
+  .access-grid .contact-fax { justify-content: center; }
+}
+
+/* お問い合わせカード：299px 以下で電話番号・メール・FAX がカードからはみ出さないように */
+@media (max-width: 18.6875rem) {
+  .access-grid .contact-content a.contact-phone, .access-grid .contact-content a.contact-email { grid-template-columns: 1.25rem minmax(0, 1fr); gap: .375rem; padding-inline: .375rem; }
+  .contact-links svg { width: 1.25rem; height: 1.25rem; }
+  .contact-link-text { padding-left: .375rem; }
+  .contact-phone .contact-link-value { font-size: .9375rem; letter-spacing: 0; }
+  .contact-email .contact-link-value { font-size: .8125rem; }
+  /* FAX は番号の途中で折り返さないよう、アイコンを隠して1行に収める（見出しのアイコンと同じ扱い） */
+  .contact-fax-pill { padding-inline: .625rem; font-size: .8125rem; }
+  .contact-fax-pill svg { display: none; }
+  .contact-fax-pill > span { padding-left: 0; border-left: 0; }
+}
+
+/* ===== 看護師長の写真（nurse1.jpg：トップ）。縦長写真なので、頭が切れないよう上寄せで枠いっぱいに ===== */
+.staff-profile img.staff-portrait--nurse { object-fit: cover; object-position: 50% 6%; }
+
+/* ===== 臨床検査技師（gishi1.jpg）・医療事務（jimu1.jpg）の写真：トップ。看護師長と同じく上寄せで枠いっぱいに ===== */
+.staff-profile img:is(.staff-portrait--gishi, .staff-portrait--jimu) { object-fit: cover; }
+.staff-profile img.staff-portrait--gishi { object-position: 50% 3%; }
+.staff-profile img.staff-portrait--jimu { object-position: 50% 14%; }

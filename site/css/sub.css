@@ -282,3 +282,10 @@ img.photo--director { object-position: 9% 30%; }
 .complete-receipt { max-width: 55rem; margin: 1.5rem auto 0; font-size: 1.125rem; font-weight: 700; }
 .complete-receipt strong { color: var(--color-brand-strong); font: 700 1.375rem/1.4 var(--font-heading); letter-spacing: .06em; overflow-wrap: anywhere; }
 .complete-demo-note { margin-top: .5rem; color: var(--color-error); font-size: .9375rem; }
+
+/* 看護師長の写真（nurse2.jpg：スタッフ紹介ページ）：頭の上に少し余白を残して上寄せ */
+img.staff-page-photo--nurse { object-position: 50% 22%; }
+
+/* 臨床検査技師（gishi2.jpg）・医療事務（jimu2.jpg）の写真：スタッフ紹介ページ */
+img.staff-page-photo--gishi { object-position: 50% 15%; }
+img.staff-page-photo--jimu { object-position: 50% 0%; }
