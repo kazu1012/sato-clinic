@@ -615,3 +615,7 @@ address { font-style: normal; }
   /* 休診日・最寄駅も、項目名の下に内容を置く */
   .hero-facts > div:not(.hero-fact-tel) { grid-template-columns: minmax(0, 1fr); gap: .125rem; }
 }
+/* 300px 以上では、番号の <wbr> で折り返さないようにする（white-space: nowrap でも Chrome は <wbr> で折り返すため） */
+@media (min-width: 18.75rem) {
+  .hero-tel-number wbr { display: none; }
+}
