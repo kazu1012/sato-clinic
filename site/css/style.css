@@ -868,3 +868,27 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 @media (max-width: 37.5rem) {
   .faq-list a { min-height: calc(3.5rem + 1px); }
 }
+
+/* ===== 院内システムのご案内（staff.html）。メニューには出さないページ ===== */
+.staff-lead { max-width: 48rem; line-height: 1.9; }
+.staff-open { max-width: 56rem; margin-top: 2rem; padding: 1.5rem 1.75rem; border-radius: 1.25rem; background: var(--color-surface); }
+.staff-open h2 { color: var(--color-heading); font-size: 1.25rem; font-weight: 700; line-height: 1.5; }
+.staff-open ol { margin: .75rem 0 1.25rem; padding-left: 1.5em; list-style: decimal; line-height: 1.8; }
+.staff-open .staff-open-button { border-color: #0b7a3e; background: #0b7a3e; color: #fff; }
+.staff-open .staff-open-button:is(:hover, :focus-visible) { background: #08602f; color: #fff; }
+.staff-open .staff-open-button:active { background: #064a24; color: #fff; }
+.staff-note { margin-top: 1rem; color: var(--color-muted); font-size: .875rem; line-height: 1.8; }
+.staff-feature { max-width: 56rem; margin-top: 3.5rem; }
+.staff-feature h2 { display: flex; align-items: center; gap: .75rem; color: var(--color-heading); font-size: 1.375rem; font-weight: 700; line-height: 1.5; }
+.staff-num { display: inline-grid; flex: none; place-items: center; width: 2rem; height: 2rem; border-radius: 50%; background: var(--color-brand); color: #fff; font-size: 1rem; }
+.staff-feature p { margin-top: .75rem; line-height: 1.9; }
+.staff-feature p a { color: var(--color-heading); text-decoration: underline; }
+.staff-feature figure { margin: 1.25rem 0 0; }
+.staff-feature img { display: block; width: 100%; height: auto; border: 1px solid var(--color-line); border-radius: .75rem; background: #fff; box-shadow: 0 1px 2px rgb(8 96 47 / 4%), 0 6px 18px rgb(8 96 47 / 6%); }
+.staff-feature figcaption { margin-top: .625rem; color: var(--color-muted); font-size: .875rem; }
+.staff-system { max-width: 56rem; margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-line); color: var(--color-muted); font-size: .875rem; line-height: 1.9; }
+@media (max-width: 37.5rem) {
+  .staff-open { padding: 1.25rem; }
+  .staff-feature { margin-top: 2.5rem; }
+  .staff-feature h2 { font-size: 1.25rem; }
+}
