@@ -11,7 +11,7 @@
 
 // ▼ Apps Script を公開したら、ここに「ウェブアプリの URL」（…/exec で終わる）を貼る
 //   空のままだと「テスト表示」になり、実際には送信しません。
-const GAS_URL = "";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN88eOB7Vz093VBSjbkHxBUjOITmwL66hvKXsH8ppmaQSc/exec";
 
 (() => {
   const form = document.getElementById("reservation-form");

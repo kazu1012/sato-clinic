@@ -14,7 +14,7 @@
  */
 
 const CONFIG = {
-  NOTIFY_TO: 'kazuhide.aoki@gmail.com', // 通知メールの宛先（医院側）
+  NOTIFY_TO: 'sato.clinic.test2026@gmail.com', // 通知メールの宛先（医院側）
   CLINIC_NAME: '佐藤医院',
   CLINIC_TEL: '00-0000-0000',
   SPREADSHEET_NAME: '佐藤医院 ご予約・ご相談 受付一覧',
