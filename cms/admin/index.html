@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<title>佐藤医院 院内システム</title>
+<style>
+  :root {
+    --brand: #0f924a; --brand-strong: #0b7a3e; --heading: #08602f; --text: #1f2b29; --muted: #5a6966;
+    --line: #dcebe1; --surface: #eef7f1; --page: #f6f7f6; --white: #fff;
+    --warn: #b45309; --warn-bg: #fff4e5; --danger: #b42318; --danger-bg: #fdecea; --info-bg: #e8f1fb; --info: #1d4f91;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--page); color: var(--text); font: 16px/1.7 "BIZ UDPGothic", "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif; }
+  a { color: var(--brand-strong); }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ヘッダー */
+  .app-header { background: var(--white); border-bottom: 1px solid var(--line); }
+  .app-header-inner { max-width: 960px; margin: 0 auto; padding: 12px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+  .app-title { margin: 0; font-size: 1.25rem; color: var(--heading); line-height: 1.4; }
+  .app-title small { display: block; font-size: .8125rem; color: var(--muted); font-weight: 400; }
+  .app-header-links { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+  .notice-bar { margin: 0; padding: 4px 16px; background: var(--heading); color: #fff; font-size: .75rem; text-align: center; }
+
+  /* タブ */
+  .tabs { max-width: 960px; margin: 0 auto; padding: 12px 20px 0; display: flex; gap: 8px; overflow-x: auto; }
+  .tab { flex: 1 0 auto; min-height: 48px; padding: 8px 18px; border: 1px solid var(--line); border-bottom: 0; border-radius: var(--radius) var(--radius) 0 0; background: var(--surface); font-weight: 700; color: var(--muted); cursor: pointer; }
+  .tab[aria-selected="true"] { background: var(--white); color: var(--heading); box-shadow: inset 0 3px 0 var(--brand); }
+  .badge { display: inline-block; min-width: 1.6em; margin-left: 6px; padding: 0 6px; border-radius: 999px; background: var(--danger); color: #fff; font-size: .75rem; line-height: 1.6; text-align: center; }
+
+  main { max-width: 960px; margin: 0 auto; padding: 0 20px 48px; }
+  .panel { background: var(--white); border: 1px solid var(--line); border-radius: 0 0 var(--radius) var(--radius); padding: 20px; }
+  .panel-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; margin-bottom: 14px; }
+  .panel-head h2 { margin: 0; font-size: 1.125rem; color: var(--heading); }
+  .hint { margin: 0 0 14px; color: var(--muted); font-size: .875rem; }
+
+  /* ボタン */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 8px 16px; border: 1px solid var(--brand); border-radius: 999px; background: var(--white); color: var(--brand-strong); font-weight: 700; text-decoration: none; cursor: pointer; line-height: 1.3; }
+  .btn:hover { background: var(--surface); }
+  .btn-primary { background: var(--brand-strong); border-color: var(--brand-strong); color: #fff; }
+  .btn-primary:hover { background: var(--heading); }
+  .btn-small { min-height: 40px; padding: 6px 12px; font-size: .875rem; }
+  .btn-plain { border-color: var(--line); color: var(--text); }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .btn:focus-visible, .tab:focus-visible, .card:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid #f2b705; outline-offset: 2px; }
+
+  /* 絞り込み */
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter { min-height: 40px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); cursor: pointer; font-size: .875rem; }
+  .filter[aria-pressed="true"] { background: var(--heading); border-color: var(--heading); color: #fff; font-weight: 700; }
+
+  /* 状態の印 */
+  .pill { display: inline-block; padding: 1px 10px; border-radius: 999px; font-size: .8125rem; font-weight: 700; white-space: nowrap; }
+  .pill-未対応 { background: var(--danger-bg); color: var(--danger); }
+  .pill-対応中 { background: var(--warn-bg); color: var(--warn); }
+  .pill-完了 { background: var(--surface); color: var(--brand-strong); }
+  .pill-公開 { background: var(--surface); color: var(--brand-strong); }
+  .pill-非公開 { background: #eceff1; color: #555; }
+  .pill-top { background: var(--info-bg); color: var(--info); }
+
+  /* ご相談の一覧 */
+  .cards { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .card { display: block; width: 100%; padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--white); text-align: left; cursor: pointer; }
+  .card:hover { border-color: var(--brand); }
+  .card.is-new { border-left: 5px solid var(--danger); }
+  .card-top { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: .8125rem; color: var(--muted); }
+  .card-name { margin: 4px 0 0; font-size: 1.0625rem; font-weight: 700; }
+  .card-sub { margin: 0; font-size: .875rem; color: var(--muted); }
+
+  /* 詳細 */
+  .detail dl { display: grid; grid-template-columns: 9em 1fr; margin: 0 0 16px; border-top: 1px solid var(--line); }
+  .detail dt, .detail dd { margin: 0; padding: 8px 4px; border-bottom: 1px solid var(--line); }
+  .detail dt { color: var(--muted); font-size: .875rem; }
+  .detail dd { overflow-wrap: anywhere; }
+  .message-box { white-space: pre-wrap; }
+  .block { margin: 18px 0; padding: 16px; border-radius: var(--radius); background: var(--surface); }
+  .block h3 { margin: 0 0 10px; font-size: 1rem; color: var(--heading); }
+  .seg { display: flex; flex-wrap: wrap; gap: 8px; }
+  .seg button[aria-pressed="true"] { background: var(--heading); border-color: var(--heading); color: #fff; }
+
+  /* 表（お知らせ・よくあるご質問） */
+  .rows { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .row { display: grid; grid-template-columns: 2.2em 1fr auto; gap: 6px 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid var(--line); }
+  .row-no { color: var(--muted); font-size: .875rem; text-align: right; }
+  .row-main { min-width: 0; }
+  .row-meta { display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; font-size: .8125rem; color: var(--muted); }
+  .row-title { margin: 2px 0 0; font-weight: 700; overflow-wrap: anywhere; }
+  .row.is-private .row-title { color: var(--muted); }
+  .row-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  .icon-btn { min-width: 40px; padding-inline: 8px; }
+
+  /* 入力フォーム */
+  .form-grid { display: grid; gap: 16px; }
+  .field-label { display: block; margin-bottom: 4px; font-weight: 700; }
+  .field-label .req { margin-left: 6px; padding: 0 6px; border-radius: 4px; background: var(--danger); color: #fff; font-size: .75rem; }
+  .field-note { margin: 4px 0 0; color: var(--muted); font-size: .8125rem; }
+  input[type="text"], input[type="date"], select, textarea { width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid #b9cbbf; border-radius: 8px; background: #fff; }
+  textarea { min-height: 10em; resize: vertical; line-height: 1.7; }
+  .radios { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+  .radios label, .check { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; }
+  .radios input, .check input { width: 22px; height: 22px; accent-color: var(--brand-strong); }
+  .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .error-box { margin: 0 0 12px; padding: 10px 14px; border-radius: 8px; background: var(--danger-bg); color: var(--danger); font-weight: 700; }
+
+  /* プレビュー（公開サイトの見た目に近づける） */
+  .preview { margin-top: 18px; border: 2px dashed #b9cbbf; border-radius: var(--radius); background: #f6f7f6; padding: 16px; }
+  .preview-label { margin: 0 0 8px; font-size: .8125rem; font-weight: 700; color: var(--muted); }
+  .pv-news { background: #fff; border-radius: 10px; padding: 18px 20px; }
+  .pv-news time { color: var(--muted); font-size: .875rem; }
+  .pv-news h4 { margin: 4px 0 8px; font-size: 1.25rem; color: var(--heading); }
+  .pv-news p, .pv-faq p { margin: 0 0 .6em; }
+  .pv-faq { background: #fff; border-radius: 10px; padding: 16px 18px; }
+  .pv-qa { display: grid; grid-template-columns: 2.2em 1fr; gap: 10px; align-items: start; }
+  .pv-qa + .pv-qa { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+  .pv-mark { display: grid; place-items: center; width: 2em; height: 2em; border-radius: 50%; background: var(--brand-strong); color: #fff; font-weight: 700; }
+  .pv-mark.a { background: #fff; color: var(--brand-strong); border: 2px solid var(--brand-strong); }
+  .pv-faq h4 { margin: 0; font-size: 1.0625rem; }
+
+  /* お知らせの帯 */
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 10; width: min(92vw, 560px); padding: 12px 16px; border-radius: 10px; background: #1f2b29; color: #fff; box-shadow: 0 6px 24px rgb(0 0 0 / 25%); }
+  .toast a { color: #b7f5cd; font-weight: 700; }
+  .loading { padding: 32px 0; text-align: center; color: var(--muted); }
+  .empty { padding: 24px 0; text-align: center; color: var(--muted); }
+
+  @media (max-width: 600px) {
+    .app-header-inner, .tabs, main { padding-left: 12px; padding-right: 12px; }
+    .panel { padding: 14px; }
+    .tab { padding: 8px 12px; font-size: .9375rem; }
+    .detail dl { grid-template-columns: 1fr; }
+    .detail dt { padding-bottom: 0; border-bottom: 0; }
+    .row { grid-template-columns: 1.8em 1fr; }
+    .row-actions { grid-column: 1 / -1; justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+<header class="app-header">
+  <p class="notice-bar">※掲載情報は教材用の架空設定です。</p>
+  <div class="app-header-inner">
+    <h1 class="app-title">佐藤医院 院内システム<small>医院スタッフ専用（ログインしたアカウントだけが開けます）</small></h1>
+    <div class="app-header-links">
+      <a class="btn btn-small btn-plain" id="link-site" href="#" target="_blank" rel="noopener">公開サイトを開く</a>
+      <a class="btn btn-small btn-plain" id="link-sheet" href="#" target="_blank" rel="noopener">スプレッドシートを開く</a>
+    </div>
+  </div>
+</header>
+
+<div class="tabs" role="tablist" aria-label="メニュー">
+  <button class="tab" role="tab" id="tab-inquiry" aria-controls="panel-inquiry" aria-selected="true">ご相談<span class="badge" id="badge-new" hidden></span></button>
+  <button class="tab" role="tab" id="tab-news" aria-controls="panel-news" aria-selected="false" tabindex="-1">お知らせ</button>
+  <button class="tab" role="tab" id="tab-faq" aria-controls="panel-faq" aria-selected="false" tabindex="-1">よくあるご質問</button>
+</div>
+
+<main>
+  <!-- ご相談 -->
+  <section class="panel" id="panel-inquiry" role="tabpanel" aria-labelledby="tab-inquiry">
+    <div id="inquiry-list-view">
+      <div class="panel-head">
+        <h2>Webフォームから届いたご相談</h2>
+        <button class="btn btn-small btn-plain" id="inquiry-reload">最新の情報に更新</button>
+      </div>
+      <p class="hint">新しいものが上に並びます。カードを押すと、くわしい内容と返信のボタンが出ます。</p>
+      <div class="filters" role="group" aria-label="対応状況で絞り込む" id="inquiry-filters"></div>
+      <div style="height:12px"></div>
+      <ul class="cards" id="inquiry-list"><li class="loading">読み込んでいます…</li></ul>
+    </div>
+    <div id="inquiry-detail-view" class="detail" hidden></div>
+  </section>
+
+  <!-- お知らせ -->
+  <section class="panel" id="panel-news" role="tabpanel" aria-labelledby="tab-news" hidden>
+    <div id="news-list-view">
+      <div class="panel-head">
+        <h2>お知らせ</h2>
+        <button class="btn btn-primary" id="news-add">＋ 新しいお知らせを書く</button>
+      </div>
+      <p class="hint">上にあるものほど、サイトの上に表示されます。「↑」「↓」で順番を変えられます。トップページには「公開」の上から5件が出ます。</p>
+      <ul class="rows" id="news-list"><li class="loading">読み込んでいます…</li></ul>
+    </div>
+    <div id="news-edit-view" hidden></div>
+  </section>
+
+  <!-- よくあるご質問 -->
+  <section class="panel" id="panel-faq" role="tabpanel" aria-labelledby="tab-faq" hidden>
+    <div id="faq-list-view">
+      <div class="panel-head">
+        <h2>よくあるご質問</h2>
+        <button class="btn btn-primary" id="faq-add">＋ 新しい質問を書く</button>
+      </div>
+      <p class="hint" id="faq-hint"></p>
+      <ul class="rows" id="faq-list"><li class="loading">読み込んでいます…</li></ul>
+    </div>
+    <div id="faq-edit-view" hidden></div>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var config = null;
+  var state = { inquiries: [], news: [], faq: [], filter: 'すべて' };
+
+  /* ---------- サーバー（Apps Script）の呼び出し ---------- */
+  function call(name) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (resolve, reject) {
+      var runner = google.script.run.withSuccessHandler(resolve).withFailureHandler(function (err) {
+        reject(new Error(err && err.message ? err.message : String(err)));
+      });
+      runner[name].apply(runner, args);
+    });
+  }
+
+  /* ---------- 小さな道具 ---------- */
+  function $(id) { return document.getElementById(id); }
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    if (attrs) Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v == null || v === false) return;
+      if (k === 'text') el.textContent = v;
+      else if (k === 'class') el.className = v;
+      else if (k.indexOf('on') === 0) el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    for (var i = 2; i < arguments.length; i++) {
+      var c = arguments[i];
+      if (c == null || c === false) continue;
+      (Array.isArray(c) ? c : [c]).forEach(function (x) { if (x != null && x !== false) el.append(x); });
+    }
+    return el;
+  }
+  var toastTimer = null;
+  function toast(message, link) {
+    var box = $('toast');
+    box.replaceChildren(message);
+    if (link) { box.append(' '); box.append(h('a', { href: link.href, target: '_blank', rel: 'noopener', text: link.text })); }
+    box.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { box.hidden = true; }, link ? 9000 : 4000);
+  }
+  function busy(button, on, label) {
+    if (!button) return;
+    if (on) { button.dataset.label = button.textContent; button.textContent = label || '保存しています…'; button.disabled = true; }
+    else { button.textContent = button.dataset.label || button.textContent; button.disabled = false; }
+  }
+  function fail(err) { toast('うまくいきませんでした：' + err.message); }
+  function jpDate(ymd) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(ymd || '');
+    if (!m) return '';
+    var w = '日月火水木金土'.charAt(new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).getUTCDay());
+    return m[1] + '年' + Number(m[2]) + '月' + Number(m[3]) + '日（' + w + '）';
+  }
+  // 「[文字](ページ名)」をリンクにして、段落ごとに <p> を作る（公開サイトと同じルール）
+  function richParagraphs(text) {
+    return String(text || '').split('\n').map(function (t) { return t.trim(); }).filter(Boolean).map(function (line) {
+      var p = h('p');
+      var re = /\[([^\]]+)\]\(([^)\s]+)\)/g, last = 0, m;
+      while ((m = re.exec(line))) {
+        p.append(line.slice(last, m.index));
+        var url = m[2];
+        var ok = /^(https:\/\/|tel:|mailto:|#)/.test(url) || !/^[a-z]+:/i.test(url);
+        p.append(ok ? h('a', { href: url, target: '_blank', rel: 'noopener', text: m[1] }) : m[0]);
+        last = re.lastIndex;
+      }
+      p.append(line.slice(last));
+      return p;
+    });
+  }
+
+  /* ---------- タブ ---------- */
+  var TABS = ['inquiry', 'news', 'faq'];
+  function selectTab(name) {
+    TABS.forEach(function (t) {
+      var on = t === name;
+      $('tab-' + t).setAttribute('aria-selected', on ? 'true' : 'false');
+      $('tab-' + t).tabIndex = on ? 0 : -1;
+      $('panel-' + t).hidden = !on;
+    });
+  }
+  TABS.forEach(function (t, i) {
+    $('tab-' + t).addEventListener('click', function () { selectTab(t); });
+    $('tab-' + t).addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      var next = TABS[(i + (e.key === 'ArrowRight' ? 1 : TABS.length - 1)) % TABS.length];
+      selectTab(next); $('tab-' + next).focus();
+    });
+  });
+
+  /* ================= ご相談 ================= */
+  var FILTERS = ['すべて', '未対応', '対応中', '完了'];
+
+  function renderFilters() {
+    $('inquiry-filters').replaceChildren.apply($('inquiry-filters'), FILTERS.map(function (f) {
+      var n = f === 'すべて' ? state.inquiries.length : state.inquiries.filter(function (x) { return x.status === f; }).length;
+      return h('button', { class: 'filter', 'aria-pressed': state.filter === f ? 'true' : 'false', onclick: function () { state.filter = f; renderInquiries(); } }, f + '（' + n + '）');
+    }));
+  }
+
+  function renderInquiries() {
+    var n = state.inquiries.filter(function (x) { return x.status === '未対応'; }).length;
+    $('badge-new').hidden = !n;
+    $('badge-new').textContent = n;
+    $('badge-new').setAttribute('aria-label', '未対応 ' + n + '件');
+    renderFilters();
+    var list = state.inquiries.filter(function (x) { return state.filter === 'すべて' || x.status === state.filter; });
+    var ul = $('inquiry-list');
+    if (!list.length) { ul.replaceChildren(h('li', { class: 'empty', text: state.filter === 'すべて' ? 'まだご相談は届いていません。' : '「' + state.filter + '」のご相談はありません。' })); return; }
+    ul.replaceChildren.apply(ul, list.map(function (x) {
+      return h('li', null, h('button', { class: 'card' + (x.status === '未対応' ? ' is-new' : ''), onclick: function () { openInquiry(x.id); } },
+        h('span', { class: 'card-top' }, h('span', { class: 'pill pill-' + x.status, text: x.status }), h('span', { text: x.id }), h('span', { text: '受付 ' + x.receivedAt })),
+        h('p', { class: 'card-name', text: x.name + ' 様' }),
+        h('p', { class: 'card-sub', text: x.type + '・' + x.visit + '　第1希望 ' + jpDate(x.date1) + ' ' + x.time1 })
+      ));
+    }));
+  }
+
+  function loadInquiries(button) {
+    busy(button, true, '読み込んでいます…');
+    return call('getInquiries').then(function (rows) { state.inquiries = rows; renderInquiries(); })
+      .catch(fail).then(function () { busy(button, false); });
+  }
+
+  function gmailUrl(x) {
+    var body = x.name + ' 様\n\nこのたびは佐藤医院にご予約・ご相談をいただき、ありがとうございます。\n\n\n\n――――――――――\n佐藤医院\nTEL：00-0000-0000\n受付時間：午前 8:00〜11:00 ／ 午後 12:00〜17:00\n休診日：木曜・土曜午後・日曜';
+    var q = 'authuser=' + encodeURIComponent(config.account) + '&view=cm&fs=1&to=' + encodeURIComponent(x.email) +
+      '&su=' + encodeURIComponent('【佐藤医院】ご予約・ご相談の件（' + x.id + '）') + '&body=' + encodeURIComponent(body);
+    return 'https://mail.google.com/mail/?' + q;
+  }
+
+  function openInquiry(id) {
+    var x = state.inquiries.filter(function (i) { return i.id === id; })[0];
+    if (!x) return;
+    var view = $('inquiry-detail-view');
+    var memo = h('textarea', { id: 'inquiry-memo', rows: '4' }); memo.value = x.memo;
+    var saveMemo = h('button', { class: 'btn btn-small', onclick: function () {
+      busy(saveMemo, true);
+      call('updateInquiry', x.id, { memo: memo.value }).then(function (updated) { replaceInquiry(updated); toast('メモを保存しました。'); })
+        .catch(fail).then(function () { busy(saveMemo, false); });
+    } }, 'メモを保存');
+
+    var statusButtons = INQUIRY_STATUSES().map(function (s) {
+      return h('button', { class: 'btn btn-small', 'aria-pressed': x.status === s ? 'true' : 'false', onclick: function () { setInquiryStatus(x.id, s); } }, s);
+    });
+
+    var reply = x.email
+      ? h('div', null,
+          h('a', { class: 'btn btn-primary', href: gmailUrl(x), target: '_blank', rel: 'noopener', onclick: function () { if (x.status === '未対応') setInquiryStatus(x.id, '対応中', true); } }, 'Gmail で返信する'),
+          h('p', { class: 'field-note', text: 'Gmail の新しいメール画面が開き、宛先と件名が入っています。本文を書いて送信してください。押すと対応状況が「対応中」になります。' }))
+      : h('p', { class: 'field-note', text: 'メールアドレスの入力がありません。お電話でご連絡ください。' });
+
+    var dl = h('dl', null,
+      row('受付番号', x.id), row('受付日時', x.receivedAt),
+      row('お名前', x.name + '（' + x.kana + '）様'),
+      row('電話番号', h('a', { href: 'tel:' + x.tel.replace(/[^0-9]/g, ''), text: x.tel })),
+      row('メールアドレス', x.email || '（入力なし）'),
+      row('ご希望の内容', x.type), row('初診・再診', x.visit),
+      row('第1希望', jpDate(x.date1) + '　' + x.time1),
+      row('第2希望', x.date2 ? jpDate(x.date2) + '　' + x.time2 : '（なし）'),
+      row('ご相談内容', h('span', { class: 'message-box', text: x.message || '（記入なし）' })));
+    function row(k, v) { return [h('dt', { text: k }), h('dd', null, v)]; }
+
+    view.replaceChildren(
+      h('button', { class: 'btn btn-small btn-plain', onclick: closeInquiry }, '← 一覧に戻る'),
+      h('div', { class: 'panel-head', style: 'margin-top:12px' }, h('h2', { tabindex: '-1', id: 'inquiry-detail-title', text: x.name + ' 様のご相談' }), h('span', { class: 'pill pill-' + x.status, text: x.status })),
+      dl,
+      h('div', { class: 'block' }, h('h3', { text: '返信する' }), reply),
+      h('div', { class: 'block' }, h('h3', { text: '対応状況' }), h('div', { class: 'seg', role: 'group', 'aria-label': '対応状況' }, statusButtons)),
+      h('div', { class: 'block' }, h('h3', null, h('label', { for: 'inquiry-memo', text: 'メモ（院内用・相談者には見えません）' })), memo, h('div', { class: 'form-actions' }, saveMemo)));
+    $('inquiry-list-view').hidden = true;
+    view.hidden = false;
+    $('inquiry-detail-title').focus();
+  }
+  function INQUIRY_STATUSES() { return config.inquiryStatuses; }
+
+  function replaceInquiry(updated) {
+    if (!updated) return;
+    state.inquiries = state.inquiries.map(function (i) { return i.id === updated.id ? updated : i; });
+  }
+  function setInquiryStatus(id, status, quiet) {
+    return call('updateInquiry', id, { status: status }).then(function (updated) {
+      replaceInquiry(updated); renderInquiries();
+      if (!$('inquiry-detail-view').hidden) openInquiry(id);
+      toast(quiet ? '対応状況を「対応中」にしました。' : '対応状況を「' + status + '」にしました。');
+    }).catch(fail);
+  }
+  function closeInquiry() {
+    $('inquiry-detail-view').hidden = true;
+    $('inquiry-list-view').hidden = false;
+    renderInquiries();
+  }
+  $('inquiry-reload').addEventListener('click', function (e) { loadInquiries(e.currentTarget); });
+
+  /* ================= お知らせ・よくあるご質問（共通の一覧） ================= */
+  function renderRows(kind) {
+    var items = state[kind];
+    var ul = $(kind + '-list');
+    if (!items.length) { ul.replaceChildren(h('li', { class: 'empty', text: 'まだありません。「＋」のボタンから追加してください。' })); return; }
+    var topCount = 0;
+    ul.replaceChildren.apply(ul, items.map(function (it, i) {
+      var isPublic = it.status === '公開';
+      var meta = [h('span', { class: 'pill pill-' + it.status, text: isPublic ? '公開中' : '非公開' })];
+      if (kind === 'news') {
+        if (isPublic && topCount < 5) { topCount++; meta.push(h('span', { class: 'pill pill-top', text: 'トップに表示' })); }
+        meta.push(h('span', { text: it.date ? jpDate(it.date) : '日付なし' }));
+      } else {
+        meta.push(h('span', { text: it.category }));
+        if (it.top) meta.push(h('span', { class: 'pill pill-top', text: 'トップに表示' }));
+      }
+      var title = kind === 'news' ? it.title : it.question;
+      return h('li', { class: 'row' + (isPublic ? '' : ' is-private') },
+        h('span', { class: 'row-no', text: (i + 1) + '.' }),
+        h('div', { class: 'row-main' }, h('div', { class: 'row-meta' }, meta), h('p', { class: 'row-title', text: title })),
+        h('div', { class: 'row-actions' },
+          h('button', { class: 'btn btn-small', onclick: function () { openEditor(kind, it.id); } }, '編集'),
+          h('button', { class: 'btn btn-small btn-plain icon-btn', 'aria-label': '「' + title + '」を1つ上へ', disabled: i === 0, onclick: function (e) { move(kind, it.id, 'up', e.currentTarget); } }, '↑'),
+          h('button', { class: 'btn btn-small btn-plain icon-btn', 'aria-label': '「' + title + '」を1つ下へ', disabled: i === items.length - 1, onclick: function (e) { move(kind, it.id, 'down', e.currentTarget); } }, '↓'),
+          h('button', { class: 'btn btn-small btn-plain', onclick: function (e) { toggle(kind, it, e.currentTarget); } }, isPublic ? '非公開にする' : '公開する')));
+    }));
+    if (kind === 'faq') {
+      var n = items.filter(function (x) { return x.top && x.status === '公開'; }).length;
+      $('faq-hint').textContent = '分類ごとにまとめて、上にあるものから順にサイトに表示されます。トップページに出せるのは' + config.topFaqMax + '件までです（今 ' + n + ' 件）。';
+    }
+  }
+
+  var API = {
+    news: { get: 'getNews', save: 'saveNews', move: 'moveNews', status: 'setNewsStatus', page: 'news.html', label: 'お知らせ' },
+    faq: { get: 'getFaq', save: 'saveFaq', move: 'moveFaq', status: 'setFaqStatus', page: 'faq.html', label: 'よくあるご質問' },
+  };
+
+  function load(kind) {
+    return call(API[kind].get).then(function (rows) { state[kind] = rows; renderRows(kind); }).catch(fail);
+  }
+  function move(kind, id, dir, button) {
+    busy(button, true, '…');
+    call(API[kind].move, id, dir).then(function (rows) { state[kind] = rows; renderRows(kind); toast('順番を変えました。サイトにもすぐ反映されます。'); })
+      .catch(fail).then(function () { busy(button, false); });
+  }
+  function toggle(kind, it, button) {
+    var next = it.status === '公開' ? '非公開' : '公開';
+    if (next === '非公開' && !confirm('「' + (it.title || it.question) + '」を非公開にします。サイトから見えなくなります（消えはしません）。よろしいですか？')) return;
+    busy(button, true, '…');
+    call(API[kind].status, it.id, next).then(function (rows) {
+      state[kind] = rows; renderRows(kind);
+      toast(next === '公開' ? '公開しました。' : '非公開にしました。', { href: config.siteUrl + API[kind].page + (next === '公開' ? '#' + it.id : ''), text: 'サイトで確認する' });
+    }).catch(fail).then(function () { busy(button, false); });
+  }
+
+  /* ================= 編集画面 ================= */
+  function openEditor(kind, id) {
+    var it = id ? state[kind].filter(function (x) { return x.id === id; })[0] : null;
+    var view = $(kind + '-edit-view');
+    var err = h('p', { class: 'error-box', role: 'alert', hidden: true });
+    var preview = h('div', { class: 'preview', hidden: true });
+    var fields, read;
+
+    if (kind === 'news') {
+      var title = h('input', { type: 'text', id: 'f-title', maxlength: '100', required: true }); title.value = it ? it.title : '';
+      var date = h('input', { type: 'date', id: 'f-date' }); date.value = it ? it.date : '';
+      var body = h('textarea', { id: 'f-body', rows: '10', required: true }); body.value = it ? it.body : '';
+      fields = [
+        field('f-title', 'タイトル', true, title),
+        field('f-date', '掲載日', false, date, '空のままなら、日付は表示しません。'),
+        field('f-body', '本文', true, body, '改行すると、そこで段落が分かれます。'),
+      ];
+      read = function () { return { id: it ? it.id : '', title: title.value.trim(), date: date.value, body: body.value.trim(), status: statusValue() }; };
+    } else {
+      var cat = h('select', { id: 'f-cat' }, config.categories.map(function (c) { return h('option', { value: c, text: c }); }));
+      cat.value = it ? it.category : config.categories[0];
+      var q = h('input', { type: 'text', id: 'f-q', maxlength: '200', required: true }); q.value = it ? it.question : '';
+      var a = h('textarea', { id: 'f-a', rows: '8', required: true }); a.value = it ? it.answer : '';
+      var top = h('input', { type: 'checkbox', id: 'f-top' }); top.checked = it ? it.top : false;
+      fields = [
+        field('f-cat', '分類', true, cat),
+        field('f-q', '質問', true, q),
+        field('f-a', '回答', true, a, '改行すると段落が分かれます。ほかのページへのリンクは [Web予約](reservation.html) のように書きます。'),
+        h('div', null, h('label', { class: 'check' }, top, 'トップページに出す'), h('p', { class: 'field-note', text: 'トップページに出せるのは' + config.topFaqMax + '件までです。それより多いときは、上にあるものから' + config.topFaqMax + '件が出ます。' })),
+      ];
+      read = function () { return { id: it ? it.id : '', category: cat.value, question: q.value.trim(), answer: a.value.trim(), top: top.checked, status: statusValue() }; };
+    }
+
+    var current = it ? it.status : '公開';
+    var radios = h('fieldset', { style: 'border:0;margin:0;padding:0' }, h('legend', { class: 'field-label', text: '公開の設定' }),
+      h('div', { class: 'radios' },
+        ['公開', '非公開'].map(function (s) {
+          var r = h('input', { type: 'radio', name: 'f-status', value: s }); r.checked = current === s;
+          return h('label', null, r, s === '公開' ? '公開する（サイトに表示）' : '非公開（下書きとして保存）');
+        })));
+    function statusValue() { var r = view.querySelector('input[name="f-status"]:checked'); return r ? r.value : '非公開'; }
+
+    var saveBtn = h('button', { class: 'btn btn-primary', onclick: save }, '保存する');
+    view.replaceChildren(
+      h('button', { class: 'btn btn-small btn-plain', onclick: function () { closeEditor(kind); } }, '← 一覧に戻る（保存しない）'),
+      h('h2', { tabindex: '-1', id: kind + '-edit-title', style: 'margin:14px 0;font-size:1.125rem;color:var(--heading)', text: (it ? API[kind].label + 'を編集' : '新しい' + (kind === 'news' ? 'お知らせ' : '質問')) }),
+      err,
+      h('div', { class: 'form-grid' }, fields, radios),
+      h('div', { class: 'form-actions' }, h('button', { class: 'btn', onclick: showPreview }, 'プレビューを見る'), saveBtn),
+      preview);
+    $(kind + '-list-view').hidden = true;
+    view.hidden = false;
+    $(kind + '-edit-title').focus();
+
+    function check(data) {
+      if (kind === 'news') { if (!data.title) return 'タイトルを入力してください。'; if (!data.body) return '本文を入力してください。'; }
+      else { if (!data.question) return '質問を入力してください。'; if (!data.answer) return '回答を入力してください。'; }
+      return '';
+    }
+    function showPreview() {
+      var data = read();
+      var msg = check(data);
+      if (msg) { err.textContent = msg; err.hidden = false; return; }
+      err.hidden = true;
+      var inner = kind === 'news'
+        ? h('article', { class: 'pv-news' }, data.date ? h('time', { text: jpDate(data.date).replace(/（.）$/, '') }) : null, h('h4', { text: data.title }), richParagraphs(data.body))
+        : h('div', { class: 'pv-faq' }, h('p', { class: 'preview-label', text: data.category }),
+            h('div', { class: 'pv-qa' }, h('span', { class: 'pv-mark', text: 'Q' }), h('h4', { text: data.question })),
+            h('div', { class: 'pv-qa' }, h('span', { class: 'pv-mark a', text: 'A' }), h('div', null, richParagraphs(data.answer))));
+      preview.replaceChildren(h('p', { class: 'preview-label', text: 'プレビュー（サイトでの見え方。まだ保存していません）' }), inner);
+      preview.hidden = false;
+      preview.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+    function save() {
+      var data = read();
+      var msg = check(data);
+      if (msg) { err.textContent = msg; err.hidden = false; err.scrollIntoView({ block: 'center' }); return; }
+      err.hidden = true;
+      busy(saveBtn, true);
+      call(API[kind].save, data).then(function (rows) {
+        state[kind] = rows;
+        var saved = it ? rows.filter(function (x) { return x.id === it.id; })[0] : rows[0];
+        closeEditor(kind);
+        toast(data.status === '公開' ? '保存しました。サイトにすぐ反映されます。' : '非公開で保存しました（サイトには出ません）。',
+          data.status === '公開' && saved ? { href: config.siteUrl + API[kind].page + '#' + saved.id, text: 'サイトで確認する' } : null);
+      }).catch(function (e) { err.textContent = e.message; err.hidden = false; err.scrollIntoView({ block: 'center' }); })
+        .then(function () { busy(saveBtn, false); });
+    }
+  }
+
+  function field(id, label, required, control, note) {
+    return h('div', null,
+      h('label', { class: 'field-label', for: id }, label, required ? h('span', { class: 'req', text: '必須' }) : null),
+      control,
+      note ? h('p', { class: 'field-note', text: note }) : null);
+  }
+
+  function closeEditor(kind) {
+    $(kind + '-edit-view').hidden = true;
+    $(kind + '-list-view').hidden = false;
+    renderRows(kind);
+  }
+  $('news-add').addEventListener('click', function () { openEditor('news'); });
+  $('faq-add').addEventListener('click', function () { openEditor('faq'); });
+
+  /* ---------- はじめに ---------- */
+  call('getConfig').then(function (c) {
+    config = c;
+    $('link-site').href = c.siteUrl;
+    $('link-sheet').href = c.sheetUrl;
+    return Promise.all([loadInquiries(), load('news'), load('faq')]);
+  }).catch(fail);
+})();
+</script>
+</body>
+</html>

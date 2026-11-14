@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/sub.css">
   <script src="js/main.js" defer></script>
+  <script src="js/cms.js" defer></script>
+  <script src="js/faq.js" defer></script>
 </head>
 <body id="top">
 <a class="skip-link" href="#main-content">本文へ</a>
@@ -38,6 +40,8 @@
   <div class="page-body">
     <div class="container">
       <p class="lead">当院に関するご質問をまとめました。<br>その他のご不明点がございましたら、スタッフまでお気軽にお問い合わせください。</p>
+      <!-- 院内システムで公開した内容に、js/faq.js が差し替える（読み込めないときはこのまま表示） -->
+      <div class="faq-archive" data-faq-archive>
       <section class="faq-category" aria-labelledby="faq-cat-1">
         <h2 id="faq-cat-1">診療について</h2>
         <div class="faq-items">
@@ -102,6 +106,7 @@
           </div>
         </div>
       </section>
+      </div>
       <p class="faq-closing">その他のご質問や詳細については、スタッフまでお気軽にお問い合わせください。</p>
     </div>
   </div>

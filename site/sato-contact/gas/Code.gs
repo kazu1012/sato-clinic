@@ -73,9 +73,59 @@ function doPost(e) {
   }
 }
 
-// ブラウザでURLを開いたときの確認用
-function doGet() {
+// 公開サイトが「お知らせ」「よくあるご質問」を読むための入口（院内システムで「公開」にした行だけを返す）
+//   …/exec?type=news ／ …/exec?type=faq
+// それ以外（URLをそのまま開いたとき）は、正常に公開されているかの確認用の文を返す
+function doGet(e) {
+  const type = e && e.parameter && e.parameter.type;
+  try {
+    if (type === 'news') return json_({ ok: true, items: publicNews_() });
+    if (type === 'faq') return json_({ ok: true, items: publicFaq_(), categories: FAQ_CATEGORIES });
+  } catch (err) {
+    console.error(err && err.stack ? err.stack : err);
+    return json_({ ok: false });
+  }
   return ContentService.createTextOutput(CONFIG.CLINIC_NAME + ' ご予約・ご相談フォームの受付用URLです（正常に公開されています）。');
+}
+
+/* ================= 公開サイト用の読み出し（院内システムのシートを読むだけ） ================= */
+
+const FAQ_CATEGORIES = ['診療について', '予防接種・健康診断について', 'お支払いについて', 'その他'];
+
+// 見出しの名前で読み、「公開」の行だけを並び順に並べて返す
+function publicRows_(sheetName) {
+  const sheet = getSheet_().getParent().getSheetByName(sheetName);
+  if (!sheet || sheet.getLastRow() < 2) return [];
+  const values = sheet.getDataRange().getValues();
+  const head = values[0].map(String);
+  return values.slice(1)
+    .map((row) => { const o = {}; head.forEach((h, i) => { o[h] = row[i]; }); return o; })
+    .filter((o) => String(o['ID']).trim() && String(o['状態']) === '公開')
+    .sort((a, b) => (Number(a['並び順']) || 0) - (Number(b['並び順']) || 0));
+}
+
+// 改行ごとに段落に分ける（空の行は飛ばす）
+function paragraphs_(text) {
+  return String(text == null ? '' : text).replace(/\r\n?/g, '\n').split('\n').map((t) => t.trim()).filter(Boolean);
+}
+
+function publicNews_() {
+  return publicRows_('お知らせ').map((o) => ({
+    id: String(o['ID']),
+    date: o['掲載日'] instanceof Date ? Utilities.formatDate(o['掲載日'], CONFIG.TIMEZONE, 'yyyy-MM-dd') : String(o['掲載日'] || '').trim(),
+    title: String(o['タイトル']),
+    body: paragraphs_(o['本文']),
+  }));
+}
+
+function publicFaq_() {
+  return publicRows_('よくあるご質問').map((o) => ({
+    id: String(o['ID']),
+    category: String(o['分類']),
+    question: String(o['質問']),
+    answer: paragraphs_(o['回答']),
+    top: String(o['トップに表示']) === 'はい',
+  }));
 }
 
 /* ================= 入力チェック（contact.js と同じルール） ================= */

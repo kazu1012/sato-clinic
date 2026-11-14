@@ -6,6 +6,7 @@
  * 送信に成功したら reservation-complete.html に移り、受付番号を表示します。
  *
  * 入力のルールは Code.gs の validate_ / checkDate_ と同じです。片方を変えたら、もう片方も直してください。
+ * ただし「メールアドレス（確認用）」の欄は画面だけのチェックで、Code.gs には送りません（name 属性を付けていないため）。
  * もとにしたファイル：sato-contact/contact.js
  */
 
@@ -25,9 +26,9 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
   const submitLabel = submitButton.textContent;
   const COMPLETE_PAGE = "reservation-complete.html";
 
-  // 入力欄（name 属性）→ 画面の id
+  // 入力欄（name 属性）→ 画面の id（email2 は確認用。name 属性がなく、送信しない）
   const IDS = {
-    name: "f-name", kana: "f-kana", tel: "f-tel", email: "f-mail", type: "f-type",
+    name: "f-name", kana: "f-kana", tel: "f-tel", email: "f-mail", email2: "f-mail2", type: "f-type",
     visit: "f-visit1", date1: "f-date1", time1: "f-time1", date2: "f-date2", time2: "f-time2",
     message: "f-message", agree: "f-agree",
   };
@@ -92,6 +93,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
     kana: (s) => kataToHira(s.trim()),
     tel: normalizeTel,
     email: (s) => toHalfWidth(s.trim()),
+    email2: (s) => toHalfWidth(s.trim()),
   };
   Object.keys(NORMALIZE).forEach((name) => {
     el(name).addEventListener("blur", () => { el(name).value = NORMALIZE[name](el(name).value); });
@@ -125,6 +127,15 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
       if (s && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s) || s.length > 254)) return "メールアドレスの形式が正しくありません。";
       return "";
     },
+    // 確認用（画面だけのチェック）：整えたあとで、大文字・小文字を区別せずに比べる
+    email2: (v) => {
+      const mail = toHalfWidth(value("email").trim());
+      const s = toHalfWidth(v.trim());
+      if (!mail && !s) return "";
+      if (!s) return "確認のため、メールアドレスをもう一度入力してください。";
+      if (s.toLowerCase() !== mail.toLowerCase()) return "メールアドレスが一致しません。";
+      return "";
+    },
     type: (v) => (!v ? "ご希望の内容を選択してください。" : ""),
     visit: (v) => (!v ? "初診・再診を選択してください。" : ""),
     date1: () => {
@@ -149,7 +160,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
     agree: () => (!el("agree").checked ? "個人情報の取り扱いへの同意が必要です。" : ""),
   };
   const LABELS = {
-    name: "お名前", kana: "ふりがな", tel: "電話番号", email: "メールアドレス", type: "ご希望の内容",
+    name: "お名前", kana: "ふりがな", tel: "電話番号", email: "メールアドレス", email2: "メールアドレス（確認用）", type: "ご希望の内容",
     visit: "初診・再診", date1: "ご希望日（第1希望）", date2: "ご希望日（第2希望）", message: "ご相談内容", agree: "個人情報の取り扱い",
   };
   // エラーのとき aria-invalid を付ける入力欄
@@ -236,10 +247,14 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
 
   // ---------- 入力し終えた欄だけをその場でチェック（入力途中で赤くしない） ----------
   const keyOf = (name) => ({ time1: "date1", time2: "date2" }[name] || name);
+  // name 属性のない確認用の欄は、id から見分ける
+  const nameOf = (target) => target.name || (target.id === IDS.email2 ? "email2" : "");
   const touched = new Set();
+  // メールアドレスを書き換えたら、確認用に何か入っているとき、確認用もチェックし直す
+  const recheckEmail2 = () => { if (el("email2").value) validateField("email2"); };
 
   form.addEventListener("focusout", (event) => {
-    const name = event.target.name;
+    const name = nameOf(event.target);
     if (!name || !RULES[keyOf(name)]) return;
     // 日付と時間帯は、両方に触れてからチェック（日付の誤りは change で知らせる）
     if (/^(date|time)[12]$/.test(name)) {
@@ -249,13 +264,16 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
     }
     touched.add(keyOf(name));
     validateField(keyOf(name));
+    if (name === "email") recheckEmail2();
   });
 
   form.addEventListener("input", (event) => {
-    const key = keyOf(event.target.name);
+    const key = keyOf(nameOf(event.target));
     // すでにエラー表示中の欄は、直ったらすぐ消す
     const box = document.getElementById(`f-${key}-error`);
     if (box && box.textContent) validateField(key);
+    // メールアドレスを直して確認用と一致したら、確認用のエラーもすぐ消す
+    if (key === "email" && document.getElementById("f-email2-error").textContent) recheckEmail2();
   });
 
   form.addEventListener("change", (event) => {
