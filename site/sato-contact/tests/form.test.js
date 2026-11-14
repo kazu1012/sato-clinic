@@ -205,7 +205,7 @@ test('Apps Scriptへ送信：完了ページに受付番号が出て、医院へ
 
   const { sent, rows } = await (await fetch(`http://localhost:${GAS_PORT}/sent`)).json();
   assert.equal(sent.length, 2);
-  assert.equal(sent[0].to, 'kazuhide.aoki@gmail.com');
+  assert.equal(sent[0].to, 'sato.clinic.test2026@gmail.com');
   assert.equal(sent[0].opt.replyTo, 'hanako@example.com');
   assert.equal(sent[1].to, 'hanako@example.com');
   assert.equal(rows[1][3], 'さとう はなこ');

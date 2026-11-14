@@ -95,7 +95,7 @@ test('通知メール：医院宛て、返信先＝相談者', () => {
   const env = makeEnv();
   env.post(valid());
   const n = env.sent[0];
-  assert.equal(n.to, 'kazuhide.aoki@gmail.com');
+  assert.equal(n.to, 'sato.clinic.test2026@gmail.com');
   assert.equal(n.opt.replyTo, 'hanako@example.com');
   assert.match(n.subject, /^【Web予約・相談】予防接種／佐藤 花子様（SATO-261112-0001）$/);
   assert.match(n.body, /このメールに「返信」すると、相談者（hanako@example.com）に届きます/);
@@ -200,7 +200,7 @@ test('同じアドレスへの自動返信は10分に1回まで（通知は毎�
   env.post(valid());
   env.post(valid());
   const toUser = env.sent.filter((m) => m.to === 'hanako@example.com');
-  const toClinic = env.sent.filter((m) => m.to === 'kazuhide.aoki@gmail.com');
+  const toClinic = env.sent.filter((m) => m.to === 'sato.clinic.test2026@gmail.com');
   assert.equal(toUser.length, 1);
   assert.equal(toClinic.length, 2);
 });

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>院内システム 操作説明書｜佐藤医院</title>
+  <meta name="description" content="佐藤医院の院内システムの操作説明書（スタッフ向け）です。">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/sub.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body id="top">
+<a class="skip-link" href="#main-content">本文へ</a>
+<svg class="svg-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+  <symbol id="icon-phone" viewBox="0 0 24 24"><path d="M5 3 3 5c-1 6 10 17 16 16l2-2-5-5-3 2-5-5 2-3Z"/></symbol>
+  <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M3 5h18M3 12h18M3 19h18"/></symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
+  <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M4 12h15m-5-5 5 5-5 5"/></symbol>
+</defs></svg>
+<p class="site-notice">当サイトは制作課題用の架空の医院です。<br class="sp-br">掲載している住所・電話番号・人物はすべて架空のものです。</p>
+<header class="site-header">
+  <a class="brand" href="index.html" aria-label="佐藤医院 トップ"><img class="brand-image" src="assets/images/logo.png" width="500" height="150" alt="佐藤医院" decoding="async"></a>
+  <button class="nav-toggle" type="button" aria-controls="primary-navigation" aria-expanded="false"><svg aria-hidden="true"><use href="#icon-menu"></use></svg><span>メニュー</span></button>
+  <nav class="primary-nav" id="primary-navigation" aria-label="メインナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長挨拶</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li></ul></nav>
+  <div class="header-actions">
+    <a class="button header-tel" href="tel:0000000000" aria-label="佐藤医院に電話する 00-0000-0000">00-0000-0000</a>
+    <a class="button header-reservation" href="reservation.html">ご予約・ご相談</a>
+  </div>
+</header>
+<main id="main-content">
+  <div class="page-header">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="パンくずリスト"><ol><li><a href="index.html">トップ</a></li><li><a href="staff.html">院内システムのご案内</a></li><li aria-current="page">操作説明書</li></ol></nav>
+      <p class="eyebrow" lang="en">MANUAL</p>
+      <h1 class="section-title page-title">院内システム 操作説明書</h1>
+    </div>
+  </div>
+  <div class="page-body">
+    <div class="container manual">
+      <p class="manual-lead">医院スタッフ向けの説明書です。院内システムでは、Webフォームから届いたご予約・ご相談への対応と、ホームページの「お知らせ」「よくあるご質問」の更新ができます。ボタンの名前は、画面の表記どおり「　」で書いています。</p>
+
+      <nav class="manual-toc" aria-label="この説明書の目次">
+        <p class="manual-toc-title">目次</p>
+        <ol>
+          <li><a href="#m-open">院内システムを開く</a></li>
+          <li><a href="#m-inquiry">ご予約・ご相談に対応する</a></li>
+          <li><a href="#m-news">お知らせを載せる・直す</a></li>
+          <li><a href="#m-faq">よくあるご質問を載せる・直す</a></li>
+          <li><a href="#m-trouble">困ったとき</a></li>
+          <li><a href="#m-privacy">個人情報を守るために</a></li>
+        </ol>
+      </nav>
+
+      <section id="m-open" aria-labelledby="m-open-t">
+        <h2 id="m-open-t">1. 院内システムを開く</h2>
+        <ol class="manual-steps">
+          <li>ブラウザの<strong>プライベートウィンドウ</strong>を開きます（Safari は「ファイル」→「新規プライベートウインドウ」、Chrome は「新しいシークレット ウィンドウ」）。</li>
+          <li><a href="https://script.google.com/macros/s/AKfycbwJBrweWnRnUNRkhhlYWRXxWAdxuZZv_XN66E3-TFmhUlLgbPxkwR_WZje4s6fM3qfp/exec" target="_blank" rel="noopener">院内システム<span class="sr-only">（新しいタブで開きます）</span></a>を開きます。</li>
+          <li>医院の Google アカウントでログインします。</li>
+          <li>「ご相談」「お知らせ」「よくあるご質問」の3つのタブが出たら、開けています。</li>
+        </ol>
+        <p class="manual-tip"><strong>ポイント</strong>　ふだん使っているブラウザで開くと、「ページが見つかりません」と出ることがあります。ほかの Google アカウントにもログインしていると起きる Google 側の不具合です。プライベートウィンドウで開けば起きません。</p>
+      </section>
+
+      <section id="m-inquiry" aria-labelledby="m-inquiry-t">
+        <h2 id="m-inquiry-t">2. ご予約・ご相談に対応する</h2>
+        <p>ホームページのフォームからご予約・ご相談が届くと、医院のメールに「通知メール」が届き、院内システムの「ご相談」に1件追加されます。<strong>ご予約は、医院からご連絡した時点で確定します</strong>（ホームページにそう書いてあります）。届いたら、なるべく早くご連絡してください。</p>
+        <h3>届いたご相談を見る</h3>
+        <ol class="manual-steps">
+          <li>「ご相談」のタブを押します。タブの赤い数字は、まだ対応していない件数です。</li>
+          <li>新しいものが上に並びます。<span class="manual-badge is-new">未対応</span>のものは、左に赤い線が付きます。</li>
+          <li>カードを押すと、お名前・電話番号・ご希望日・ご相談内容などがくわしく出ます。</li>
+          <li>新しく届いたか確かめたいときは「最新の情報に更新」を押します。</li>
+        </ol>
+        <figure><img src="assets/images/staff/cms-inquiry.jpg" width="1600" height="1043" alt="ご相談の一覧。未対応・対応中・完了のカードが新しい順に並んでいる。" loading="lazy" decoding="async"><figcaption>ご相談の一覧（写真は架空のテストデータです）</figcaption></figure>
+        <h3>メールで返信する</h3>
+        <ol class="manual-steps">
+          <li>カードを開き、「Gmail で返信する」を押します。</li>
+          <li>Gmail の画面が開きます。宛先、件名「【佐藤医院】ご予約・ご相談の件（受付番号）」、書き出しのあいさつ、医院の署名が、はじめから入っています。</li>
+          <li>あいさつと署名の間に、ご予約の確定や、ご相談への答えを書いて送信します。</li>
+          <li>院内システムに戻ると、対応状況が自動で<span class="manual-badge is-doing">対応中</span>になっています。</li>
+        </ol>
+        <p class="manual-tip"><strong>ポイント</strong>　メールアドレスの入力がないご相談には「Gmail で返信する」が出ません。お電話でご連絡してください。</p>
+        <h3>対応状況とメモ</h3>
+        <ol class="manual-steps">
+          <li>対応が終わったら、カードの中の「完了」を押します。対応状況は「未対応」「対応中」「完了」の3つです。</li>
+          <li>電話で話した内容などは「メモ（院内用・相談者には見えません）」の欄に書き、「メモを保存」を押します。</li>
+          <li>一覧の上の「すべて」「未対応」「対応中」「完了」で、見たいものだけに絞り込めます。</li>
+          <li>「← 一覧に戻る」で一覧に戻ります。</li>
+        </ol>
+      </section>
+
+      <section id="m-news" aria-labelledby="m-news-t">
+        <h2 id="m-news-t">3. お知らせを載せる・直す</h2>
+        <h3>新しく載せる</h3>
+        <ol class="manual-steps">
+          <li>「お知らせ」のタブで「＋ 新しいお知らせを書く」を押します。</li>
+          <li>「タイトル」と「本文」を書きます（どちらも必須）。本文は、改行したところで段落が分かれます。</li>
+          <li>「掲載日」を選びます。空のままなら、日付は表示されません。</li>
+          <li>「公開の設定」で「公開する（サイトに表示）」を選び、「プレビューを見る」でホームページでの見え方を確かめます。</li>
+          <li>「保存する」を押します。「保存しました。サイトにすぐ反映されます。」と出たら完了です。「サイトで確認する」で、ホームページを開いて確かめられます。</li>
+        </ol>
+        <figure><img src="assets/images/staff/cms-news.jpg" width="1600" height="1743" alt="お知らせを書く画面。タイトル・掲載日・本文の欄、公開の設定、その下にプレビュー。" loading="lazy" decoding="async"><figcaption>お知らせを書く画面（下はプレビュー）</figcaption></figure>
+        <h3>直す・並べ替える・下げる</h3>
+        <ol class="manual-steps">
+          <li>直したいお知らせの「編集」を押し、書き直して「保存する」を押します。やめるときは「← 一覧に戻る（保存しない）」。</li>
+          <li>「↑」「↓」で順番を変えます。上にあるものほど、ホームページの上に出ます。<strong>トップページには「公開」の上から5件</strong>が出ます。</li>
+          <li>ホームページから下げたいときは「非公開にする」を押します。消えるわけではなく、「公開する」でいつでも戻せます。</li>
+        </ol>
+        <p class="manual-tip"><strong>ポイント</strong>　消す（削除する）ボタンはありません。まちがえて消してしまうことがないよう、「非公開」で下げる作りにしています。</p>
+      </section>
+
+      <section id="m-faq" aria-labelledby="m-faq-t">
+        <h2 id="m-faq-t">4. よくあるご質問を載せる・直す</h2>
+        <ol class="manual-steps">
+          <li>「よくあるご質問」のタブで「＋ 新しい質問を書く」を押します。</li>
+          <li>「分類」を選びます（診療について／予防接種・健康診断について／お支払いについて／その他）。</li>
+          <li>「質問」と「回答」を書きます。トップページにも出したいときは「トップページに出す」に印を付けます（5件まで）。</li>
+          <li>「公開の設定」を選び、「プレビューを見る」で確かめてから「保存する」を押します。</li>
+        </ol>
+        <p>直す・並べ替える・非公開にする操作は、お知らせと同じです。並び順は分類ごとにまとめて、上にあるものから表示されます。</p>
+        <p class="manual-tip"><strong>回答の中にリンクを入れるとき</strong>　<code>[Web予約](reservation.html)</code> のように書くと、「Web予約」の文字がご予約ページへのリンクになります。</p>
+      </section>
+
+      <section id="m-trouble" aria-labelledby="m-trouble-t">
+        <h2 id="m-trouble-t">5. 困ったとき</h2>
+        <dl class="manual-qa">
+          <dt>「ページが見つかりません」と出る</dt>
+          <dd>ほかの Google アカウントにもログインしているブラウザで開くと起きます。プライベートウィンドウで開き直してください。</dd>
+          <dt>保存したのに、ホームページに出ない</dt>
+          <dd>ホームページを再読み込みしてください。読み込みに時間がかかったときは、前の内容のまま表示されることがあります。少し待ってから、もう一度読み込んでください。「公開」になっているかも確かめてください。</dd>
+          <dt>まちがえて公開してしまった</dt>
+          <dd>すぐに「非公開にする」を押します。ホームページから見えなくなります。</dd>
+          <dt>確認やテストで載せたお知らせが残っている</dt>
+          <dd>確認が終わったら、忘れずに「非公開にする」を押してください。</dd>
+          <dt>「受付確認のメールが届かない」とお電話があった</dt>
+          <dd>メールアドレスの打ち間違いが考えられます（フォームには確認のためにもう一度入力する欄がありますが、それでも起きることがあります）。ご相談の内容と電話番号を確かめ、お電話で対応してください。</dd>
+          <dt>「うまくいきませんでした」と出る</dt>
+          <dd>通信がうまくいかなかったときに出ます。ページを再読み込みして、もう一度操作してください。</dd>
+        </dl>
+      </section>
+
+      <section id="m-privacy" aria-labelledby="m-privacy-t">
+        <h2 id="m-privacy-t">6. 個人情報を守るために</h2>
+        <ul class="manual-list">
+          <li>院内システムを開いたまま、席を離れないでください。使い終わったらウィンドウを閉じます。</li>
+          <li>ご相談の内容を印刷したり、医院の外に持ち出したりしないでください。</li>
+          <li>医院の Google アカウントのパスワードは、ほかの人に教えないでください。</li>
+          <li>データは Google スプレッドシートに保存されています（「スプレッドシートを開く」で見られます）。スプレッドシートを直接書き換えたり、共有の設定を変えたりしないでください。</li>
+        </ul>
+        <p>くわしくは<a href="privacy.html">個人情報の取り扱い</a>をご覧ください。</p>
+      </section>
+    </div>
+  </div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-top"><p class="footer-name">佐藤医院</p><nav class="footer-nav" aria-label="フッターナビゲーション"><ul><li><a href="index.html">トップ</a></li><li><a href="news.html">お知らせ</a></li><li><a href="message.html">院長挨拶</a></li><li><a href="medical.html">診療内容</a></li><li><a href="about.html">当院について</a></li><li><a href="faq.html">よくあるご質問</a></li><li><a href="access.html">アクセス</a></li><li><a href="reservation.html">ご予約・ご相談</a></li></ul></nav></div>
+    <div class="footer-bottom"><address><span class="footer-address">〒123-4567 東京都台東区上野0-0-0</span> <span class="footer-tel">電話番号：<a href="tel:0000000000">00-0000-0000</a></span></address><div class="footer-legal"><a href="privacy.html">個人情報の取り扱い</a><small>©佐藤医院</small></div></div>
+  </div>
+</footer>
+</body>
+</html>

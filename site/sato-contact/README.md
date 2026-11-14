@@ -22,7 +22,7 @@
 相談者がフォームを送信（reservation.html → js/reservation.js）
         │  fetch で POST
         ▼
-Google Apps Script（gas/Code.gs）……kazuhide.aoki@gmail.com のアカウントで動く
+Google Apps Script（gas/Code.gs）……sato.clinic.test2026@gmail.com のアカウントで動く
         ├─ 入力チェック（画面と同じルールをサーバー側でももう一度）
         ├─ スプレッドシート「佐藤医院 ご予約・ご相談 受付一覧」に1行追加（受付番号・対応状況つき）
         ├─ Gmail に通知メール（返信先 = 相談者のアドレス）
@@ -44,7 +44,7 @@ Google Apps Script（gas/Code.gs）……kazuhide.aoki@gmail.com のアカウン
 
 ## Google 側の設定（初回だけ・10分ほど）
 
-1. kazuhide.aoki@gmail.com でログインした状態で <https://script.google.com> を開き、「新しいプロジェクト」
+1. sato.clinic.test2026@gmail.com でログインした状態で <https://script.google.com> を開き、「新しいプロジェクト」
 2. 最初からある `コード.gs` の中身を全部消して、`gas/Code.gs` の中身を貼り付けて保存。プロジェクト名は「佐藤医院フォーム」など
 3. 上の関数の選択欄で **`setup`** を選んで「実行」
    - 「承認が必要です」→ 自分のアカウントを選ぶ
@@ -110,10 +110,10 @@ npm test
 
 ## 知っておくこと
 
-- 自動返信の差出人は **kazuhide.aoki@gmail.com**（表示名は「佐藤医院」）です。相談者にこのアドレスが見えます。課題のテストでは問題ありませんが、本物の医院なら医院用のGoogleアカウントで同じ手順を行います。
+- 自動返信の差出人は **sato.clinic.test2026@gmail.com**（表示名は「佐藤医院」）です。相談者にこのアドレスが見えます。課題のテストでは問題ありませんが、本物の医院なら医院用のGoogleアカウントで同じ手順を行います。
 - 無料の Google アカウントで送れるメールは **1日100通まで** です。
 - 送信先の URL は `js/reservation.js` に書かれるので誰でも見られますが、通知先のメールアドレスは `Code.gs`（Google側）にしかなく、ページからは見えません。
-- 本物の医院で使う場合は、症状などの個人情報を扱うので、プライバシーポリシーのページを用意してください。
+- 症状などの個人情報を扱うため、個人情報の取り扱いのページ（`site/privacy.html`）を用意し、フォームの同意欄の上からリンクしています。
 
 ## VS Code の Claude へのメモ
 
