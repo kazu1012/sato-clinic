@@ -1096,3 +1096,9 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 
 /* スタッフ紹介：英字と日本語の見出しを同じ中央線にそろえる */
 .staff-heading > div:first-child { text-align: center; }
+
+/* スタッフ紹介：STAFFを説明文の上端より少し上へ（デスクトップ） */
+@media (min-width: 73.8125rem) {
+  .staff-heading { align-items: start; }
+  .staff-heading > div:first-child { margin-top: -.375rem; }
+}
