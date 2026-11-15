@@ -1069,3 +1069,10 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
   .footer-bottom { margin-top: .5rem; padding-top: .5rem; }
   .footer-legal small { margin-left: auto; }
 }
+
+/* デスクトップ：確認済みのメニュー位置とボタン間隔 */
+@media (min-width: 73.8125rem) {
+  .site-header { padding-right: 1.5rem; }
+  .site-header .primary-nav { transform: translateX(-8px); }
+  .header-actions { gap: 1.25rem; }
+}
