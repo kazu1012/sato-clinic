@@ -1009,3 +1009,23 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
   .hero-dots button { width: 10px; height: 10px; padding: 0; border: 1px solid #fff; border-radius: 50%; background: rgb(255 255 255 / 45%); cursor: pointer; }
   .hero-dots button[aria-current="true"] { background: #fff; }
 }
+
+/* ===== タブレット・スマホ（1180px 以下）のヒーロー：文字の入っていない3枚を8秒ごとに切り替え（2026-11-15）
+   3：2の枠に3：1の写真を入れるため、横の半分だけが見える。人物が切れないよう写真ごとに見せる位置を指定
+   （--slide-x：0% = 左端、100% = 右端）。文字は従来どおり写真の下 ===== */
+@media (max-width: 73.75rem) {
+  .hero { position: relative; }
+  .hero-media { position: relative; }
+  .hero-media .hero-image { display: none; }
+  .hero-slides { display: block; position: absolute; inset: 0; }
+  .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; }
+  .hero-slide.is-active { opacity: 1; }
+  .hero-media .hero-slide > img { object-position: var(--slide-x, 50%) 50%; }
+  .hero-slide[data-pos="bl"] { --slide-x: 60%; } /* 外観：ケヤキと入口の親子 */
+  .hero-slide[data-pos="br"] { --slide-x: 20%; } /* 受付：スタッフと親子 */
+  .hero-slide[data-pos="tl"] { --slide-x: 40%; } /* 待合：高齢の夫婦 */
+  .hero-band { display: none; }
+  .hero-dots { display: flex; gap: 8px; position: absolute; z-index: 2; top: .75rem; right: .75rem; }
+  .hero-dots button { width: 9px; height: 9px; padding: 0; border: 1px solid #fff; border-radius: 50%; background: rgb(255 255 255 / 45%); cursor: pointer; }
+  .hero-dots button[aria-current="true"] { background: #fff; }
+}

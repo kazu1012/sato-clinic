@@ -72,6 +72,10 @@ compactNavigation.addEventListener("change", () => closeNavigation());
     current = i;
     slides[current].classList.add("is-active");
     mark();
+    if (compactNavigation.matches) {  // タブレット・スマホ：文字は写真の下なので動かさない
+      copy.dataset.pos = slides[current].dataset.pos;
+      return;
+    }
     copy.classList.add("is-hidden");
     setTimeout(() => {
       copy.dataset.pos = slides[current].dataset.pos;
@@ -80,7 +84,6 @@ compactNavigation.addEventListener("change", () => closeNavigation());
   }
   function start() {
     clearInterval(timer);
-    if (compactNavigation.matches) return;  // タブレット・スマホでは切り替えない
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     timer = setInterval(() => show((current + 1) % slides.length), INTERVAL);
   }
