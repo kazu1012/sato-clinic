@@ -1051,3 +1051,21 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 /* 下層ページの現在地：下線ではなく、緑の文字＋葉の形の点で示す（sub.css の下線を上書き） */
 .site-header .primary-nav a[aria-current="page"] { color: #0b7a3e; text-decoration: none; }
 .site-header .primary-nav a[aria-current="page"]::after { transform: rotate(45deg) scale(1); }
+
+/* ---------- フッター：院内システムのご案内へのリンク（全版） ---------- */
+.footer-legal a.footer-staff-link { gap: .35em; font-family: var(--font-heading); font-weight: 700; }
+.footer-staff-link svg { flex: none; }
+
+/* ---------- フッター：タブレット・スマホは行間を詰める（デスクトップは変えない） ---------- */
+@media (max-width: 73.75rem) {
+  .footer-nav a { min-height: 2rem; }
+  .footer-nav ul { row-gap: 0; }
+  .footer-bottom address { line-height: 1.5; }
+  .footer-bottom address a, .footer-legal a { min-height: 2rem; }
+}
+@media (max-width: 37.5rem) {
+  .site-footer { padding-block: 1rem; }
+  .footer-top, .footer-bottom { gap: .5rem; }
+  .footer-bottom { margin-top: .5rem; padding-top: .5rem; }
+  .footer-legal small { margin-left: auto; }
+}
