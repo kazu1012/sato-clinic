@@ -1084,3 +1084,9 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
   .news-photo-crop { display: block; overflow: hidden; border-radius: .875rem; }
   .news-photo-crop .news-photo { width: calc(100% + 3rem); max-width: none; border-radius: 0; }
 }
+
+/* FAQ：写真の上側のみ32px切り、全体の高さを縮める（デスクトップ） */
+@media (min-width: 73.8125rem) {
+  .faq-layout { min-height: 21.75rem; }
+  .faq-photo { aspect-ratio: 405 / 348; object-fit: cover; object-position: center bottom; }
+}
