@@ -989,7 +989,7 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
   .hero-clinic { color: var(--color-brand-strong); font: 700 max(11px, 1.1vw)/1.2 var(--font-english); letter-spacing: .05em; }
   .hero-clinic-ja { display: none; }
   .hero-clinic-en { display: inline; }
-  .hero-copy h1 { margin: .15vw 0 .1vw; color: var(--color-heading); font: 700 3.2vw/1.15 var(--font-heading); letter-spacing: .03em; }
+  .hero-copy h1 { margin: .15vw 0 .1vw; color: #0d3a22; /* 黒に近い緑 */ font: 700 3.2vw/1.15 var(--font-heading); letter-spacing: .03em; }
   .hero-tagline { display: block; color: var(--color-brand-strong); font: 500 max(10px, .85vw)/1.2 var(--font-english); letter-spacing: .05em; }
 
   .hero-facts { display: flex; margin-top: .6vw; color: var(--color-heading); }

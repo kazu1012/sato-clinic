@@ -52,7 +52,7 @@ compactNavigation.addEventListener("change", () => closeNavigation());
   const copy = document.querySelector(".hero-copy");
   const dotsWrap = document.querySelector(".hero-dots");
   if (!slides.length || !copy || !dotsWrap) return;
-  const INTERVAL = 6000;  // 1枚の表示時間（ミリ秒）
+  const INTERVAL = 8000;  // 1枚の表示時間（ミリ秒）
   const TEXT_FADE = 600;  // 文字が消えてから次の位置へ移るまで（ミリ秒）
   let current = 0, timer;
 
