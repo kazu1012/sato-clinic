@@ -43,13 +43,47 @@ document.addEventListener("click", event => {
 
 compactNavigation.addEventListener("change", () => closeNavigation());
 
-// デスクトップ（1181px 以上）では .hero-copy を視覚的に隠しているため、
-// その中の電話リンクに Tab でフォーカスが当たらないようにする（2026-11）
-const heroTelLink = document.querySelector(".hero-tel-link");
-function syncHeroTelFocus() {
-  if (!heroTelLink) return;
-  if (compactNavigation.matches) heroTelLink.removeAttribute("tabindex");
-  else heroTelLink.setAttribute("tabindex", "-1");
-}
-syncHeroTelFocus();
-compactNavigation.addEventListener("change", syncHeroTelFocus);
+// 2026-11-15：デスクトップでも .hero-copy を写真の上に表示するようにしたため、
+// 電話リンクのフォーカス無効化（tabindex="-1"）は廃止。
+
+// デスクトップのヒーロー：3枚の写真を順番に表示し、文字の位置を写真ごとに変える（2026-11-15）
+(() => {
+  const slides = document.querySelectorAll(".hero-slide");
+  const copy = document.querySelector(".hero-copy");
+  const dotsWrap = document.querySelector(".hero-dots");
+  if (!slides.length || !copy || !dotsWrap) return;
+  const INTERVAL = 6000;  // 1枚の表示時間（ミリ秒）
+  const TEXT_FADE = 600;  // 文字が消えてから次の位置へ移るまで（ミリ秒）
+  let current = 0, timer;
+
+  slides.forEach((_, i) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.setAttribute("aria-label", `${i + 1}枚目の写真`);
+    button.addEventListener("click", () => { show(i); start(); });
+    dotsWrap.appendChild(button);
+  });
+  const dots = dotsWrap.querySelectorAll("button");
+  const mark = () => dots.forEach((d, k) => k === current ? d.setAttribute("aria-current", "true") : d.removeAttribute("aria-current"));
+
+  function show(i) {
+    if (i === current) return;
+    slides[current].classList.remove("is-active");
+    current = i;
+    slides[current].classList.add("is-active");
+    mark();
+    copy.classList.add("is-hidden");
+    setTimeout(() => {
+      copy.dataset.pos = slides[current].dataset.pos;
+      copy.classList.remove("is-hidden");
+    }, TEXT_FADE);
+  }
+  function start() {
+    clearInterval(timer);
+    if (compactNavigation.matches) return;  // タブレット・スマホでは切り替えない
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    timer = setInterval(() => show((current + 1) % slides.length), INTERVAL);
+  }
+  mark(); start();
+  compactNavigation.addEventListener("change", start);
+})();

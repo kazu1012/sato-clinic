@@ -961,3 +961,51 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 /* フッター：「©佐藤医院」を左の「個人情報の取り扱い」と同じ大きさに（全版） */
 .footer-legal small { font-size: .8125rem; }
 .footer-legal { flex: none; }
+
+/* ===== デスクトップ（1181px 以上）のヒーロー：3枚の写真を順番に表示（2026-11-15）
+   文字（.hero-copy）は写真ごとに位置を変える：外観＝左下 / 受付＝右下 / 待合＝左上
+   タブレット・スマホ（1180px 以下）は従来の .hero-image と .hero-copy のまま ===== */
+.hero-slides, .hero-dots { display: none; }
+@media (min-width: 73.8125rem) {
+  .hero { position: relative; }
+  .hero-media { position: relative; aspect-ratio: 3 / 1; }
+  .hero-media .hero-image { display: none; }
+  .hero-slides { display: block; position: absolute; inset: 0; }
+  .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s ease; }
+  .hero-slide.is-active { opacity: 1; }
+  .hero-media .hero-slide > img { display: block; width: 100%; height: 100%; aspect-ratio: auto; object-fit: cover; }
+  .hero-band { position: absolute; width: 42%; height: 42%; pointer-events: none; }
+  .hero-band svg { display: block; width: 100%; height: 100%; stroke: none; } /* 全体の svg 指定（線あり）を打ち消す */
+  .hero-slide[data-pos="bl"] .hero-band { left: 0; bottom: 0; }
+  .hero-slide[data-pos="br"] .hero-band { right: 0; bottom: 0; transform: scaleX(-1); }
+  .hero-slide[data-pos="tl"] .hero-band { left: 0; top: 0; }
+
+  .hero-copy { position: absolute; z-index: 1; width: auto; max-width: none; height: auto; margin: 0; padding: 0; overflow: visible; clip: auto; transition: opacity .6s ease; }
+  .hero-copy.is-hidden { opacity: 0; }
+  .hero-copy[data-pos="bl"] { left: 2vw; bottom: 1.4vw; }
+  .hero-copy[data-pos="tl"] { left: 2vw; top: 1.4vw; }
+  .hero-copy[data-pos="br"] { right: 2vw; bottom: 1.4vw; text-align: right; }
+
+  .hero-clinic { color: var(--color-brand-strong); font: 700 max(11px, 1.1vw)/1.2 var(--font-english); letter-spacing: .05em; }
+  .hero-clinic-ja { display: none; }
+  .hero-clinic-en { display: inline; }
+  .hero-copy h1 { margin: .15vw 0 .1vw; color: var(--color-heading); font: 700 3.2vw/1.15 var(--font-heading); letter-spacing: .03em; }
+  .hero-tagline { display: block; color: var(--color-brand-strong); font: 500 max(10px, .85vw)/1.2 var(--font-english); letter-spacing: .05em; }
+
+  .hero-facts { display: flex; margin-top: .6vw; color: var(--color-heading); }
+  .hero-copy[data-pos="br"] .hero-facts { justify-content: flex-end; }
+  .hero-facts > div { display: flex; flex-direction: column; align-items: flex-start; gap: .2vw; padding: 0 1.1vw; border-left: 1px solid var(--color-brand); line-height: 1.2; }
+  .hero-facts > div:first-child { padding-left: 0; border-left: 0; }
+  .hero-facts > div:last-child { padding-right: 0; }
+  .hero-copy[data-pos="br"] .hero-facts > div { align-items: flex-end; }
+  .hero-facts dt { display: inline-block; padding: .3vw .9vw; border-radius: 999px; background: var(--color-brand-strong); color: #fff; font-size: max(9px, .72vw); font-weight: 700; letter-spacing: .05em; line-height: 1; }
+  .hero-facts dd { margin: 0; font-size: max(11px, 1.05vw); font-weight: 700; letter-spacing: .01em; }
+  .hero-tel-link { color: inherit; text-decoration: none; }
+  .hero-tel-link:hover { text-decoration: underline; }
+  .hero-tel-number { font-family: "Helvetica Neue", Arial, sans-serif; font-size: max(12px, 1.15vw); } /* ハイフンを数字の中央の高さに */
+  .hero-tel-hint { display: none; }
+
+  .hero-dots { display: flex; gap: 10px; position: absolute; z-index: 2; top: 2vw; right: 2.6vw; }
+  .hero-dots button { width: 10px; height: 10px; padding: 0; border: 1px solid #fff; border-radius: 50%; background: rgb(255 255 255 / 45%); cursor: pointer; }
+  .hero-dots button[aria-current="true"] { background: #fff; }
+}
