@@ -290,28 +290,30 @@ img.staff-page-photo--nurse { object-position: 50% 22%; }
 img.staff-page-photo--gishi { object-position: 50% 15%; }
 img.staff-page-photo--jimu { object-position: 50% 0%; }
 
-/* ===== ページ見出し帯（パンくず）：タブレット・スマホは行間を詰めて細く（2026-11-15）
-   タブレットは「木漏れ日」案：外観のケヤキを淡く敷き、パンくずを丸いラベルに ===== */
-@media (max-width: 73.75rem) {
+/* ===== ページ見出し帯（パンくず）：「木漏れ日」案（2026-11-15）
+   外観のケヤキを淡く敷き、左から白く透かす。パンくずは丸いラベル、今いるページは深い緑
+   タブレット・スマホは同じデザインのまま、行間と余白を詰めて細くする ===== */
+.page-header { position: relative; padding-block: 2.25rem 3rem; background: url("../assets/images/page-header-leaves.jpg") center 30% / cover; }
+.page-header::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgb(250 250 245 / 92%) 0%, rgb(250 250 245 / 70%) 45%, rgb(250 250 245 / 10%) 100%); }
+.page-header .container { position: relative; }
+.page-header .breadcrumb ol { gap: .375rem; }
+.page-header .breadcrumb li + li::before { content: none; }
+.page-header .breadcrumb li { padding: .2rem .8rem; border: 1px solid #cfe3bf; border-radius: 999px; background: rgb(255 255 255 / 80%); font-size: .8125rem; }
+.page-header .breadcrumb li[aria-current] { border-color: #0d3a22; background: #0d3a22; color: #fff; }
+.page-header .breadcrumb a { color: #0b7a3e; text-decoration: none; }
+.page-header .eyebrow { color: #7fb446; letter-spacing: .2em; }
+.page-header .page-title { color: #0d3a22; }
+
+@media (max-width: 73.75rem) {   /* タブレット・スマホ：細く */
   .page-header { padding-block: .875rem 1rem; }
-  .page-header .breadcrumb ol { font-size: .8125rem; line-height: 1.3; }
+  .page-header::before { background: linear-gradient(90deg, rgb(250 250 245 / 93%) 0%, rgb(250 250 245 / 78%) 55%, rgb(250 250 245 / 25%) 100%); }
+  .page-header .breadcrumb ol { line-height: 1.3; }
+  .page-header .breadcrumb li { padding: .0625rem .6rem; font-size: .75rem; }
   .page-header .eyebrow { margin-top: .375rem; line-height: 1.3; }
   .page-header .page-title { margin-top: 0; line-height: 1.2; }
 }
-@media (min-width: 37.5625rem) and (max-width: 73.75rem) {
-  .page-header { position: relative; background: url("../assets/images/page-header-leaves.jpg") center 30% / cover; }
-  .page-header::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgb(250 250 245 / 92%) 0%, rgb(250 250 245 / 72%) 50%, rgb(250 250 245 / 15%) 100%); }
-  .page-header .container { position: relative; }
-  .page-header .breadcrumb ol { gap: .375rem; }
-  .page-header .breadcrumb li + li::before { content: none; }
-  .page-header .breadcrumb li { padding: .125rem .7rem; border: 1px solid #cfe3bf; border-radius: 999px; background: rgb(255 255 255 / 80%); }
-  .page-header .breadcrumb li[aria-current] { border-color: #0d3a22; background: #0d3a22; color: #fff; }
-  .page-header .breadcrumb a { color: #0b7a3e; text-decoration: none; }
-  .page-header .eyebrow { color: #7fb446; letter-spacing: .2em; }
-  .page-header .page-title { color: #0d3a22; }
-}
-@media (max-width: 37.5rem) {
-  .page-header { padding-block: .75rem .875rem; }
-  .page-header .eyebrow { margin-top: .25rem; }
-  .page-header .page-title { font-size: 1.625rem; }
+@media (max-width: 37.5rem) {    /* スマホ：さらに細く */
+  .page-header { padding-block: .625rem .75rem; }
+  .page-header .eyebrow { margin-top: .25rem; font-size: .6875rem; }
+  .page-header .page-title { font-size: 1.5rem; }
 }
