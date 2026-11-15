@@ -1076,3 +1076,11 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
   .site-header .primary-nav { transform: translateX(-8px); }
   .header-actions { gap: 1.25rem; }
 }
+
+/* お知らせ：写真右端の48px分を一覧の幅に回す（デスクトップ） */
+.news-photo-crop { display: contents; }
+@media (min-width: 73.8125rem) {
+  .news-layout { grid-template-columns: 11.9375rem minmax(0, 29.5rem) minmax(0, 1fr); }
+  .news-photo-crop { display: block; overflow: hidden; border-radius: .875rem; }
+  .news-photo-crop .news-photo { width: calc(100% + 3rem); max-width: none; border-radius: 0; }
+}
