@@ -392,7 +392,7 @@ address { font-style: normal; }
 .hours-detail-link { margin-top: 1.25rem; }
 .access-heading { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .75rem 1rem; }
 /* お知らせの日付（js/news-data.js で date を入れたときだけ表示） */
-.news-link-date { flex: none; margin-right: 1.25rem; color: var(--color-muted); font-size: .9375rem; font-weight: 400; }
+.news-link-date { flex: none; inline-size: 8rem; margin-right: 1.25rem; color: var(--color-muted); font-size: .9375rem; font-weight: 400; }
 
 /* フッターの住所と電話番号：それぞれ途中で改行せず、入りきらないときは住所のあとで改行（2026-11） */
 .footer-bottom address { display: flex; flex-wrap: wrap; align-items: center; column-gap: 1.25em; }
@@ -1103,4 +1103,9 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
   .staff-heading > div:first-child { position: relative; margin-top: 0; }
   .staff-heading .section-title { margin-top: 0; }
   .staff-heading .eyebrow { position: absolute; inset: auto 0 calc(100% + .375rem); }
+}
+
+/* 院長挨拶：ボタンと署名を上下2段の右揃えにする（デスクトップ） */
+@media (min-width: 73.8125rem) {
+  .message-actions { flex-direction: column; align-items: flex-end; }
 }
