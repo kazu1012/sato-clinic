@@ -6,7 +6,7 @@
       <stop offset="1" stop-color="#eef7f1"/>
     </linearGradient>
   </defs>
-  <rect x="1" y="1" width="85" height="85" rx="18" fill="url(#bg)" stroke="#dcece6"/>
+  <rect x="0" y="1" width="86" height="85" rx="18" fill="url(#bg)" stroke="#dcece6"/>
   <path d="M0 66c18-10 40-12 87-2v5c0 10-8 17-17 17H17C8 86 1 79 0 70Z" fill="#cfe9c9"/>
   <path d="M0 74c22-8 46-8 87 0v-4c0 9-8 16-17 16H17C8 86 1 81 0 74Z" fill="#a9d79c"/>
   <!-- 食道と胃 -->
