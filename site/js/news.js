@@ -10,10 +10,14 @@
   }
 
   function createDate(item) {
-    const label = formatDate(item.date);
+    // 初期記事と同じ記事で掲載日が空欄の場合だけ、想定済みの日付を補う。
+    // 院内システムで設定された日付は、そのまま優先する。
+    const original = (window.SATO_NEWS || []).find(news => news.id === item.id && news.title === item.title);
+    const value = item.date || (original && original.date);
+    const label = formatDate(value);
     if (!label) return null;
     const time = document.createElement("time");
-    time.dateTime = item.date;
+    time.dateTime = value;
     time.textContent = label;
     return time;
   }
