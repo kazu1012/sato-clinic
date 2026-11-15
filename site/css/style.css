@@ -1088,7 +1088,11 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 /* FAQ：写真の表示は維持し、下余白20pxと各列の縦中央揃え（デスクトップ） */
 @media (min-width: 73.8125rem) {
   .faq { padding-bottom: 1.25rem; }
+  .faq + .access { padding-top: 0; }
   .faq-layout { min-height: 21.75rem; align-items: center; }
   .faq-heading { align-self: center; padding-top: 0; }
   .faq-photo { aspect-ratio: 405 / 348; object-fit: cover; object-position: center bottom; }
 }
+
+/* スタッフ紹介：英字と日本語の見出しを同じ中央線にそろえる */
+.staff-heading > div:first-child { text-align: center; }
