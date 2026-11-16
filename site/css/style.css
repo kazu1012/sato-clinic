@@ -420,7 +420,8 @@ address { font-style: normal; }
 @media (max-width: 37.5rem) {
   .message-actions { align-items: flex-end; }
   .message-signature { width: 100%; }
-  .message-signature .message-name-part { white-space: nowrap; }
+  .message-signature-role, .message-signature-name { display: block; white-space: nowrap; }
+  .message-signature-space { display: none; }
 }
 
 /* ロゴ：画面幅が変わっても今の大きさ（134×40px）より小さくしない（2026-11） */
