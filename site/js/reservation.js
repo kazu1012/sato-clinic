@@ -59,6 +59,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
     past: P("過去の", "日付は", "選択できません。"),
     closed: P("本日の", "予約受付は", "11:00に", "終了しました。", "別の日を", "選択してください。"),
     pmOnly: P("当日の", "ご予約は", "午後のみ", "受け付けています。"),
+    satToday: P("土曜日は", "午後が", "休診のため、", "当日の", "ご予約は", "受け付けておりません。", "別の日を", "選択してください。"),
     agree: P("個人情報の", "取り扱いに", "同意してください。"),
     offline: P("送信できませんでした。"),
     busy: P("現在、", "送信が", "混み合っています。"),
@@ -106,7 +107,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
   }
 
   // 希望日のチェック（Code.gs の checkDate_ と同じルール）
-  // 当日の判定の順：過去の日付 → 11:00を過ぎている → 当日の午前
+  // 当日の判定の順：過去の日付 → 当日が土曜日 → 11:00を過ぎている → 当日の午前
   // 「今」はチェックのたびに取り直す（ページを開いたまま11:00や日付をまたいでも正しく判定する）
   function checkDate(ymd, time) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return MSG.badDate;
@@ -115,6 +116,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbxwOKruMLG-Qd4bP6sU1QNN
     const now = tokyoNow();
     if (ymd < now.ymd) return MSG.past;
     const isToday = ymd === now.ymd;
+    if (isToday && weekday(ymd) === 6) return MSG.satToday; // 当日が土曜日：時刻や時間帯にかかわらず受け付けない
     if (isToday && now.hm >= SAME_DAY_CLOSE) return MSG.closed;
     if (ymd > MAX_DATE) return "3か月以内の日付を選択してください。";
     const w = weekday(ymd);

@@ -85,13 +85,18 @@ fs.mkdirSync(OUT, { recursive: true });
     await page.fill('#f-title', '臨時休診のお知らせ' + width);
     await page.fill('#f-date', '2026-11-20');
     await page.fill('#f-body', '11月20日（金）は臨時休診とさせていただきます。\n詳しくは[お電話](tel:0000000000)でお問い合わせください。');
+    assert.equal(await page.isChecked('#f-new'), false); // 新しく書くときは、印なしから
+    await page.check('#f-new'); // 新着マークを付ける
     await page.getByRole('button', { name: 'プレビューを見る' }).click();
     assert.ok((await page.textContent('.preview')).includes('2026年11月20日'));
+    assert.equal(await page.textContent('.preview .pv-new'), 'NEW');
     assert.equal(await page.locator('.preview a[href="tel:0000000000"]').count(), 1);
     await shot('04-news-edit-preview');
     await page.getByRole('button', { name: '保存する' }).click();
     await page.waitForSelector('#news-list-view:not([hidden])');
     assert.ok((await page.locator('#news-list .row-title').first().textContent()).startsWith('臨時休診'));
+    assert.equal(await page.locator('#news-list .row').first().locator('.pill-new').count(), 1);
+    assert.equal(admin.getNews()[0].isNew, true);
     await page.locator('#news-list .row').first().getByRole('button', { name: /1つ下へ/ }).click();
     await page.waitForFunction(() => document.querySelectorAll('#news-list .row-title')[1].textContent.startsWith('臨時休診'));
     await page.locator('#news-list .row').nth(1).getByRole('button', { name: '非公開にする' }).click();

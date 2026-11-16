@@ -201,6 +201,57 @@ test('当日の予約：午後のみ・11:00まで（日本時間）。判定は
   await after.close();
 });
 
+test('当日が土曜日：時刻や時間帯にかかわらず受け付けない（第2希望も同じ）', async () => {
+  const SAT = '土曜日は午後が休診のため、当日のご予約は受け付けておりません。別の日を選択してください。';
+  for (const hm of ['09:00', '11:30']) {
+    // 2026-11-14（土）
+    const page = await openPage({ now: new Date(`2026-11-14T${hm}:00+09:00`) });
+    // 日付を選んだだけ（時間帯はまだ）でも出る
+    await page.fill('#f-date1', '2026-11-14');
+    await page.dispatchEvent('#f-date1', 'change');
+    assert.equal(await page.textContent('#f-date1-error'), SAT, `${hm} 時間帯なし`);
+    await page.selectOption('#f-time1', '午前');
+    await page.click('#f-name');
+    assert.equal(await page.textContent('#f-date1-error'), SAT, `${hm} 午前`);
+    await page.fill('#f-date2', '2026-11-14');
+    await page.dispatchEvent('#f-date2', 'change');
+    assert.equal(await page.textContent('#f-date2-error'), SAT, `${hm} 第2希望`);
+    // 過去の日付は、土曜の文言より先
+    await page.fill('#f-date1', '2026-11-13');
+    await page.dispatchEvent('#f-date1', 'change');
+    assert.equal(await page.textContent('#f-date1-error'), '過去の日付は選択できません。');
+    assert.deepEqual(page.jsErrors, []);
+    await page.close();
+  }
+});
+
+test('見出しの下の案内：当日のご予約の1文。「11:00」は途中で切れず、スマホでは「。」の後ろで改行', async () => {
+  for (const width of [375, 768, 1440]) {
+    const page = await openPage({ viewport: { width, height: 900 } });
+    const note = page.locator('#form-heading + .form-note');
+    assert.equal((await note.textContent()).trim(), '当日のご予約は午後のみとなっております。受付は当日の11:00までです。');
+    const lines = await note.evaluate((p) => {
+      // 文字ごとの行（top）を調べて、行ごとの文字列にする
+      const range = document.createRange();
+      const rows = new Map();
+      const walker = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        for (let i = 0; i < n.length; i++) {
+          range.setStart(n, i); range.setEnd(n, i + 1);
+          const top = Math.round(range.getBoundingClientRect().top);
+          rows.set(top, (rows.get(top) || '') + n.data[i]);
+        }
+      }
+      return [...rows.values()];
+    });
+    assert.ok(lines.every((l) => !/^[0-9:]/.test(l) || l.startsWith('11:00')), `${width}px：「11:00」が途中で切れている ${JSON.stringify(lines)}`);
+    if (lines.length > 1) assert.ok(lines[0].endsWith('。'), `${width}px：「。」の後ろで改行していない ${JSON.stringify(lines)}`);
+    const over = await note.evaluate((p) => p.scrollWidth - p.clientWidth);
+    assert.ok(over <= 0, `${width}px：案内がはみ出しています`);
+    await page.close();
+  }
+});
+
 test('文言の改行：スマホ・タブレット・PCで、エラーの文言が欄からはみ出さない', async () => {
   for (const width of [375, 768, 1440]) {
     const page = await openPage({ viewport: { width, height: 900 } });

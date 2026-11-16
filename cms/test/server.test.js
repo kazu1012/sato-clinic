@@ -27,7 +27,7 @@ test('初回設定：シートが作られ、原稿の内容が入る', () => {
   admin.setupCms();
   const news = admin.getNews();
   assert.equal(news.length, 5);
-  assert.deepEqual(news.map((x) => x.id), ['news-1', 'news-2', 'news-3', 'news-4', 'news-5']);
+  assert.deepEqual(news.map((x) => x.id), ['news-2', 'news-1', 'news-3', 'news-4', 'news-5']);
   assert.equal(admin.getFaq().length, 11);
   assert.equal(admin.getFaq().filter((x) => x.top).length, 5);
   admin.setupCms(); // 2回目は何も足さない
@@ -71,6 +71,40 @@ test('お知らせ：新規は先頭に入り、編集・並べ替え・公開�
   assert.equal(rows[5].id, 'news-5');
   assert.throws(() => admin.saveNews({ title: '', body: 'x', status: '公開' }), /タイトル/);
   assert.throws(() => admin.saveNews({ title: 'x', body: 'x', date: '2026-02-30', status: '公開' }), /掲載日/);
+});
+
+test('お知らせの新着マーク：初期の5件はなし。チェックだけで付け外しでき、順番は変わらない', () => {
+  const { world, form, admin } = setup();
+  form.setup(); admin.setupCms();
+  const sheet = () => world.spreadsheets[SSID].getSheetByName('お知らせ');
+  assert.equal(sheet().getRange(1, 8).getValues()[0][0], '新着'); // 「新着」は最後（H列）
+  assert.ok(admin.getNews().every((x) => x.isNew === false));
+  assert.ok(json(form.doGet({ parameter: { type: 'news' } })).items.every((x) => x.isNew === false));
+  const it = admin.getNews()[2];
+  let rows = admin.saveNews({ id: it.id, title: it.title, date: '', body: it.body, isNew: true, status: '公開' });
+  assert.equal(rows[2].id, it.id); // 直しても順番は変わらない
+  assert.equal(rows[2].isNew, true);
+  assert.equal(sheet().getRange(4, 8).getValues()[0][0], 'はい');
+  assert.deepEqual(json(form.doGet({ parameter: { type: 'news' } })).items.map((x) => x.isNew), [false, false, true, false, false]);
+  rows = admin.saveNews({ id: it.id, title: it.title, date: '', body: it.body, isNew: false, status: '公開' });
+  assert.equal(rows[2].isNew, false);
+  assert.equal(sheet().getRange(4, 8).getValues()[0][0], '');
+  // 新しい記事も、チェックを付けたときだけ
+  rows = admin.saveNews({ title: '臨時休診のお知らせ', body: '本文', isNew: true, status: '公開' });
+  assert.equal(rows[0].isNew, true);
+});
+
+test('お知らせの新着マーク：「新着」の列がない前のシートでも、見出しを書き足して使える', () => {
+  const { world, form, admin } = setup();
+  form.setup(); admin.setupCms();
+  const sheet = world.spreadsheets[SSID].getSheetByName('お知らせ');
+  sheet.rows.forEach((r) => { r.length = 7; }); // 「新着」の列を足す前の状態
+  assert.ok(json(form.doGet({ parameter: { type: 'news' } })).items.every((x) => x.isNew === false));
+  assert.ok(admin.getNews().every((x) => x.isNew === false));
+  assert.equal(sheet.getRange(1, 8).getValues()[0][0], '新着');
+  const it = admin.getNews()[0];
+  admin.saveNews({ id: it.id, title: it.title, date: '', body: it.body, isNew: true, status: '公開' });
+  assert.equal(json(form.doGet({ parameter: { type: 'news' } })).items[0].isNew, true);
 });
 
 test('よくあるご質問：保存・トップ表示・数式よけ', () => {

@@ -34,7 +34,8 @@ const STATUS_PRIVATE = '非公開';
 const INQUIRY_STATUSES = ['未対応', '対応中', '完了'];
 const FAQ_CATEGORIES = ['診療について', '予防接種・健康診断について', 'お支払いについて', 'その他'];
 
-const NEWS_HEADERS = ['ID', '状態', '掲載日', 'タイトル', '本文', '並び順', '更新日時'];
+// 「新着」は最後の列（あとから足した列。列の位置はこの並びで決まるので、途中に入れない）。値は「はい」か空
+const NEWS_HEADERS = ['ID', '状態', '掲載日', 'タイトル', '本文', '並び順', '更新日時', '新着'];
 const FAQ_HEADERS = ['ID', '状態', '分類', '質問', '回答', 'トップに表示', '並び順', '更新日時'];
 
 /* ================= 画面 ================= */
@@ -127,7 +128,7 @@ function saveNews(item) {
     if (!body) throw new Error('本文を入力してください。');
     if (body.length > 3000) throw new Error('本文は3000文字以内で入力してください。');
     if (date && !isYmd_(date)) throw new Error('掲載日の形が正しくありません。');
-    const row = { ID: item.id || newId_('news'), 状態: status, 掲載日: date, タイトル: title, 本文: body };
+    const row = { ID: item.id || newId_('news'), 状態: status, 掲載日: date, タイトル: title, 本文: body, 新着: item.isNew ? 'はい' : '' };
     upsert_(CMS.SHEET_NEWS, NEWS_HEADERS, row);
     return getNews();
   });
@@ -180,7 +181,7 @@ function setFaqStatus(id, status) {
 function newsFromRow_(r) {
   return {
     id: r.ID, status: r.状態 === STATUS_PUBLIC ? STATUS_PUBLIC : STATUS_PRIVATE,
-    date: dateText_(r.掲載日), title: String(r.タイトル), body: String(r.本文),
+    date: dateText_(r.掲載日), title: String(r.タイトル), body: String(r.本文), isNew: String(r.新着) === 'はい',
     order: Number(r.並び順) || 0, updatedAt: dateTimeText_(r.更新日時),
   };
 }
@@ -295,6 +296,13 @@ function sheet_(name, headers) {
     if (u >= 0) sheet.getRange(2, u + 1, sheet.getMaxRows() - 1, 1).setNumberFormat('yyyy/MM/dd HH:mm');
     const o = headers.indexOf('並び順');
     if (o >= 0) sheet.getRange(2, o + 1, sheet.getMaxRows() - 1, 1).setNumberFormat('0');
+  } else {
+    // あとから足した見出し（お知らせの「新着」など）がなければ、決まった位置の見出し行に書き足す
+    // （その位置にほかの見出しがあるときは、上書きしない）
+    const head = sheet.getRange(1, 1, 1, headers.length).getValues()[0].map(String);
+    headers.forEach((h, i) => {
+      if (head.indexOf(h) < 0 && !head[i].trim()) sheet.getRange(1, i + 1).setValue(h).setFontWeight('bold').setBackground('#EEF5F3');
+    });
   }
   return sheet;
 }
@@ -344,7 +352,7 @@ function setupCms() {
   const now = new Date();
   const news = sheet_(CMS.SHEET_NEWS, NEWS_HEADERS);
   if (news.getLastRow() < 2) {
-    SEED_NEWS.forEach((n, i) => news.appendRow([n.id, STATUS_PUBLIC, '', n.title, n.body, i + 1, now]));
+    SEED_NEWS.forEach((n, i) => news.appendRow([n.id, STATUS_PUBLIC, '', n.title, n.body, i + 1, now, '']));
   }
   const faq = sheet_(CMS.SHEET_FAQ, FAQ_HEADERS);
   if (faq.getLastRow() < 2) {
@@ -356,8 +364,8 @@ function setupCms() {
 
 // 掲載原稿どおりの初期データ（setupCms でだけ使う）
 const SEED_NEWS = [
-  { id: 'news-1', title: 'インフルエンザ予防接種について', body: '今年もインフルエンザの予防接種を開始いたしました。予約制となっておりますので、お電話または受付にてご予約をお願いいたします。例年、予約が集中しやすいため、早めのご予約をおすすめいたします。' },
   { id: 'news-2', title: '年末年始の休診について', body: '年末年始の休診日は、12月29日（月）〜1月4日（日）となります。年始は1月5日（月）より通常診療を再開いたします。皆様にはご不便をおかけしますが、何卒ご了承くださいますようお願いいたします。' },
+  { id: 'news-1', title: 'インフルエンザ予防接種について', body: '今年もインフルエンザの予防接種を開始いたしました。予約制となっておりますので、お電話または受付にてご予約をお願いいたします。例年、予約が集中しやすいため、早めのご予約をおすすめいたします。' },
   { id: 'news-3', title: '健康診断のご案内', body: '今年も健康診断を実施しております。定期的な健康チェックは、病気の早期発見・予防にとても重要です。各種健康診断メニューをご用意しておりますので、ご希望の方はお電話にてお申し込みください。' },
   { id: 'news-4', title: '新型コロナウイルス対策について', body: '当院では引き続き、新型コロナウイルス感染症対策を徹底しております。ご来院の際には、マスクの着用、手指消毒にご協力をお願いいたします。また、発熱や風邪症状のある方は、事前にお電話でご相談いただけるとスムーズにご案内が可能です。' },
   { id: 'news-5', title: 'オンライン診療の導入について', body: '2024年より、オンライン診療を一部導入いたしました。通院が難しい方や、遠方にお住まいの方にご利用いただけます。ご希望の方は、当院スタッフまでお問い合わせください。' },

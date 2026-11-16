@@ -45,7 +45,7 @@ const SSID = '1VzX1V6KCbPMUm9Bad5F2D1DA5DxUNMTtX-36LPnniXc';
   assert.deepEqual(await text(top, '[data-faq-top] li'), await text(topDown, '[data-faq-top] li'));
   assert.deepEqual(await text(top, '[data-news-list] li'), await text(topDown, '[data-news-list] li'));
   // 掲載日は入力したときだけ表示（初期データは空なので出ない）。並びは掲載順（上ほど新しい）で、トップと一覧は同じ順
-  const ORDER = ['インフルエンザ予防接種について', '年末年始の休診について', '健康診断のご案内', '新型コロナウイルス対策について', 'オンライン診療の導入について'];
+  const ORDER = ['年末年始の休診について', 'インフルエンザ予防接種について', '健康診断のご案内', '新型コロナウイルス対策について', 'オンライン診療の導入について'];
   for (const p of [top, topDown]) {
     assert.equal(await p.locator('[data-news-list] time').count(), 0);
     assert.deepEqual(await text(p, '[data-news-list] li'), ORDER);
@@ -55,8 +55,34 @@ const SSID = '1VzX1V6KCbPMUm9Bad5F2D1DA5DxUNMTtX-36LPnniXc';
     assert.equal(await list.locator('.news-entry time').count(), 0);
     assert.deepEqual(await text(list, '.news-entry h2'), ORDER);
     assert.ok((await text(list, '#news-2 p'))[0].includes('12月29日（月）〜1月4日（日）となります。年始は1月5日（月）より'));
+    assert.equal(await list.locator('.news-new').count(), 0); // 新着マークは最初はなし
   }
+  for (const p of [top, topDown]) assert.equal(await p.locator('.news-new').count(), 0);
   console.log('ok 初期データでは見た目が変わらない');
+
+  // 1-2) 新着マーク：チェックを付けた記事だけ、トップと一覧のタイトルの前に「NEW」。順番は変わらない
+  const flu = admin.getNews().filter((x) => x.id === 'news-1')[0];
+  admin.saveNews({ id: flu.id, title: flu.title, date: '', body: flu.body, isNew: true, status: '公開' });
+  for (const [file, sel] of [['index.html', '[data-news-list] li'], ['news.html', '.news-entry h2']]) {
+    const p = await open(file, 'live');
+    assert.deepEqual(await text(p, sel), ORDER.map((t, i) => (i === 1 ? 'NEW' + t : t)));
+    assert.equal(await p.locator('.news-new').count(), 1);
+    const label = p.locator('.news-new');
+    assert.equal(await label.evaluate((e) => getComputedStyle(e).backgroundColor), 'rgb(15, 146, 74)'); // --color-brand #0f924a
+    assert.equal(await label.evaluate((e) => getComputedStyle(e).color), 'rgb(255, 255, 255)');
+    // スマホ・タブレット・PCで、ラベルが2行に割れず、タイトルがはみ出さない
+    for (const width of [375, 768, 1440]) {
+      await p.setViewportSize({ width, height: 900 });
+      const box = await label.boundingBox();
+      assert.ok(box.height < 24, `${file} ${width}px：ラベルが割れている`);
+      const over = await p.locator(sel).nth(1).evaluate((e) => e.scrollWidth - e.clientWidth);
+      assert.ok(over <= 0, `${file} ${width}px：タイトルがはみ出している`);
+    }
+    await p.close();
+  }
+  admin.saveNews({ id: flu.id, title: flu.title, date: '', body: flu.body, isNew: false, status: '公開' });
+  assert.equal(await (await open('index.html', 'live')).locator('.news-new').count(), 0);
+  console.log('ok 新着マークの付け外し');
 
   // 2) 院内システムで変えると、サイトに出る
   admin.saveNews({ title: '臨時休診のお知らせ', date: '2026-11-20', body: '11月20日は休診します。\n[ご予約・ご相談](reservation.html)からご連絡ください。', status: '公開' });

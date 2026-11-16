@@ -21,6 +21,18 @@
     return time;
   }
 
+  // タイトル：新着マーク（院内システムの「新着マークを付ける」）があれば、前に「NEW」のラベルを付ける。
+  // ラベルとタイトルの1文節目は離さず、タイトルは文節の切れ目で改行する（.news-title.has-new）。
+  function fillTitle(target, item) {
+    if (!item.isNew) { target.append(item.title); return; }
+    target.classList.add("news-title", "has-new");
+    const label = document.createElement("span");
+    label.className = "news-new";
+    label.lang = "en";
+    label.textContent = "NEW";
+    target.append(label, item.title);
+  }
+
   function render(items) {
     // トップページ：タイトルのみ（data-news-limit 件まで）
     document.querySelectorAll("[data-news-list]").forEach(list => {
@@ -37,7 +49,7 @@
           link.append(time);
         }
         const title = document.createElement("span");
-        title.textContent = item.title;
+        fillTitle(title, item);
         link.append(title);
         li.append(link);
         return li;
@@ -60,7 +72,7 @@
         }
         const heading = document.createElement("h2");
         heading.id = `${item.id}-title`;
-        heading.textContent = item.title;
+        fillTitle(heading, item);
         article.append(heading);
         article.append(...window.SatoCms.paragraphs(item.body));
         return article;

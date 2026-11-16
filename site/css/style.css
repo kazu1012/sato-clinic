@@ -1109,3 +1109,12 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 @media (min-width: 73.8125rem) {
   .message-actions { flex-direction: column; align-items: flex-end; }
 }
+
+/* お知らせの新着マーク「NEW」（トップページ・お知らせ一覧。js/news.js が院内システムの「新着マークを付ける」に合わせて付ける）
+   タイトルより小さく控えめに。ラベルの中では改行せず、タイトルは文節の切れ目で改行し、1〜2文字だけが次の行に落ちないようにする */
+.news-new {
+  display: inline-block; margin-right: .5em; padding: .0625rem .4375rem; border-radius: .1875rem;
+  background: var(--color-brand); color: #fff; font: 700 .75rem/1.5 var(--font-english); letter-spacing: .06em;
+  vertical-align: .2em; white-space: nowrap;
+}
+.news-title.has-new { word-break: auto-phrase; text-wrap: pretty; }

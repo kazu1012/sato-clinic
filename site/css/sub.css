@@ -283,9 +283,11 @@ img.photo--director { object-position: 9% 30%; }
 /* .phrased：文節の間に <wbr> を入れた文言（js/reservation.js の P()）。文節の途中では改行しない。
    1つの文節が欄より長いとき（ごく狭い画面）だけは、はみ出さないように途中で折り返す */
 .phrased { word-break: keep-all; overflow-wrap: anywhere; }
-.form-error, .form-note, .form-error-summary { text-wrap: pretty; }
+.form-error, .form-note, .form-field-note, .form-error-summary { text-wrap: pretty; }
 /* メールアドレス欄の下の案内文 */
-.form-note { margin-top: .5rem; color: var(--color-muted); font-size: .9375rem; line-height: 1.6; }
+.form-field-note { margin-top: .5rem; color: var(--color-muted); font-size: .9375rem; line-height: 1.6; }
+/* 見出しの下の案内（.form-note）：文ごとのかたまり。幅が足りないときは「。」の後ろで改行し、文の中では文節の間でだけ改行する */
+.form-sentence { display: inline-block; max-width: 100%; }
 /* 送信中のボタン：「送信中です。」「しばらくお待ちください。」の間（「。」の後ろ）でだけ改行する。
    2行でも、ボタンの高さ（min-height: 3.625rem）の中に収まる行の高さにして、画面がガタつかないようにする */
 .submit-button.is-sending { flex-wrap: wrap; align-content: center; line-height: 1.35; }

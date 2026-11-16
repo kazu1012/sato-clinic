@@ -62,6 +62,8 @@
   .pill-公開 { background: var(--surface); color: var(--brand-strong); }
   .pill-非公開 { background: #eceff1; color: #555; }
   .pill-top { background: var(--info-bg); color: var(--info); }
+  .pill-new { background: #0f924a; color: #fff; }
+  .pv-new { display: inline-block; margin-right: .5em; padding: 0 .45em; border-radius: 3px; background: #0f924a; color: #fff; font-size: .6875rem; font-weight: 700; line-height: 1.6; letter-spacing: .06em; vertical-align: .15em; }
 
   /* ご相談の一覧 */
   .cards { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
@@ -410,6 +412,7 @@
       var meta = [h('span', { class: 'pill pill-' + it.status, text: isPublic ? '公開中' : '非公開' })];
       if (kind === 'news') {
         if (isPublic && topCount < 5) { topCount++; meta.push(h('span', { class: 'pill pill-top', text: 'トップに表示' })); }
+        if (it.isNew) meta.push(h('span', { class: 'pill pill-new', text: 'NEW' }));
         meta.push(h('span', { text: it.date ? jpDate(it.date) : '日付なし' }));
       } else {
         meta.push(h('span', { text: it.category }));
@@ -466,12 +469,14 @@
       var title = h('input', { type: 'text', id: 'f-title', maxlength: '100', required: true }); title.value = it ? it.title : '';
       var date = h('input', { type: 'date', id: 'f-date' }); date.value = it ? it.date : '';
       var body = h('textarea', { id: 'f-body', rows: '10', required: true }); body.value = it ? it.body : '';
+      var isNew = h('input', { type: 'checkbox', id: 'f-new' }); isNew.checked = it ? Boolean(it.isNew) : false;
       fields = [
         field('f-title', 'タイトル', true, title),
         field('f-date', '掲載日', false, date, '空のままなら、日付は表示しません。'),
         field('f-body', '本文', true, body, '改行すると、そこで段落が分かれます。'),
+        h('div', null, h('label', { class: 'check' }, isNew, '新着マークを付ける'), h('p', { class: 'field-note', text: '印を付けると、トップページとお知らせ一覧のタイトルの前に「NEW」が付きます。外すと消えます。' })),
       ];
-      read = function () { return { id: it ? it.id : '', title: title.value.trim(), date: date.value, body: body.value.trim(), status: statusValue() }; };
+      read = function () { return { id: it ? it.id : '', title: title.value.trim(), date: date.value, body: body.value.trim(), isNew: isNew.checked, status: statusValue() }; };
     } else {
       var cat = h('select', { id: 'f-cat' }, config.categories.map(function (c) { return h('option', { value: c, text: c }); }));
       cat.value = it ? it.category : config.categories[0];
@@ -519,7 +524,7 @@
       if (msg) { err.textContent = msg; err.hidden = false; return; }
       err.hidden = true;
       var inner = kind === 'news'
-        ? h('article', { class: 'pv-news' }, data.date ? h('time', { text: jpDate(data.date).replace(/（.）$/, '') }) : null, h('h4', { text: data.title }), richParagraphs(data.body))
+        ? h('article', { class: 'pv-news' }, data.date ? h('time', { text: jpDate(data.date).replace(/（.）$/, '') }) : null, h('h4', null, data.isNew ? h('span', { class: 'pv-new', lang: 'en', text: 'NEW' }) : null, data.title), richParagraphs(data.body))
         : h('div', { class: 'pv-faq' }, h('p', { class: 'preview-label', text: data.category }),
             h('div', { class: 'pv-qa' }, h('span', { class: 'pv-mark', text: 'Q' }), h('h4', { text: data.question })),
             h('div', { class: 'pv-qa' }, h('span', { class: 'pv-mark a', text: 'A' }), h('div', null, richParagraphs(data.answer))));

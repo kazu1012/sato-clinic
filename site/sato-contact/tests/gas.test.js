@@ -180,6 +180,23 @@ test('当日の予約：午後のみ・11:00まで（日本時間）。判定は
   assert.match(before.post(valid({ date1: '2026-11-16', date2: '2026-11-13', time2: '午前' })).errors.date2, /午後のみ/);
 });
 
+test('当日が土曜日：時刻や時間帯にかかわらず受け付けない。判定は 過去 → 当日が土曜日 → 11:00過ぎ の順', () => {
+  const SAT = '土曜日は午後が休診のため、当日のご予約は受け付けておりません。別の日を選択してください。';
+  // 2026-11-14（土）を「今日」とする
+  const at = (hm) => makeEnv({ now: new Date(`2026-11-14T${hm}:00+09:00`) });
+  for (const hm of ['08:00', '10:59', '11:00', '15:00']) {
+    const env = at(hm);
+    for (const time1 of ['午前', '午後', '']) {
+      assert.equal(env.post(valid({ date1: '2026-11-14', time1 })).errors.date1, SAT, `${hm} ${time1}`);
+    }
+    assert.match(env.post(valid({ date1: '2026-11-13', time1: '午後' })).errors.date1, /過去の日付/); // 土曜より過去が先
+    // 第2希望も同じ
+    assert.equal(env.post(valid({ date1: '2026-11-16', date2: '2026-11-14', time2: '午前' })).errors.date2, SAT);
+  }
+  // 当日でない土曜は、これまでどおり午前ならOK
+  assert.equal(makeEnv().post(valid({ date1: '2026-11-14', time1: '午前' })).ok, true);
+});
+
 test('受付確認メール：決まった形で、空の項目は（なし）', () => {
   const env = makeEnv();
   env.post(valid({ message: '' }));
@@ -199,8 +216,23 @@ test('受付確認メール：決まった形で、空の項目は（なし）',
     '（なし）',
   ].join('\n')));
   assert.match(a.body, /ご予約の場合は、そのご連絡をもって予約が確定します。/);
-  assert.match(a.body, /※このメールは送信専用です。返信は受け付けておりません。/);
+  // 署名（罫線と医院名・住所など）はない
+  assert.ok(a.body.includes('お急ぎの場合は、お電話でご連絡ください。\n\n※このメールは送信専用です。返信は受け付けておりません。'));
+  assert.ok(!/────|〒123-4567|TEL：|受付時間：|休診日：/.test(a.body));
   assert.match(a.body, /本番環境では表示されません。$/);
+});
+
+test('メールのHTML版：本文と同じ文面で、特殊文字をエスケープし、改行は<br>', () => {
+  const env = makeEnv();
+  env.post(valid({ name: '<b>佐藤</b> & "花子"', message: "1行目\n2行目 'x'" }));
+  for (const m of env.sent) {
+    assert.equal(typeof m.opt.htmlBody, 'string', m.to);
+    assert.ok(!/<(?!br>)/.test(m.opt.htmlBody), `${m.to}：<br> 以外のタグがある`);
+    const back = m.opt.htmlBody.replace(/<br>/g, '\n')
+      .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    assert.equal(back, m.body, `${m.to}：HTML版の文面が本文と違う`);
+  }
+  assert.ok(env.sent[1].opt.htmlBody.startsWith('&lt;b&gt;佐藤&lt;/b&gt; &amp; &quot;花子&quot;様<br><br>'));
 });
 
 test('第2希望：時間帯なし・第1希望と同じはエラー', () => {

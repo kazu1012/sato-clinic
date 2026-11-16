@@ -116,6 +116,7 @@ function publicNews_() {
     date: o['掲載日'] instanceof Date ? Utilities.formatDate(o['掲載日'], CONFIG.TIMEZONE, 'yyyy-MM-dd') : String(o['掲載日'] || '').trim(),
     title: String(o['タイトル']),
     body: paragraphs_(o['本文']),
+    isNew: String(o['新着']) === 'はい', // 院内システムの「新着マークを付ける」（列がなければ付けない）
   }));
 }
 
@@ -197,19 +198,21 @@ function validate_(p, today, nowHm) {
 
 // 希望日のルール：今日から・当日は午後のみで受付は11:00まで・木曜と日曜は休診・土曜は午前のみ
 // today は日本時間の 'YYYY-MM-DD'、nowHm は日本時間の 'HH:mm'（省略時は 00:00 とみなす）
-// 当日の判定の順：過去の日付 → 11:00を過ぎている → 当日の午前（js/reservation.js の checkDate と同じ）
+// 当日の判定の順：過去の日付 → 当日が土曜日 → 11:00を過ぎている → 当日の午前（js/reservation.js の checkDate と同じ）
 function checkDate_(ymd, time, today, nowHm) {
   // 13月40日のような、ありえない日付もはじく
   if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd) || new Date(ymdToUtc_(ymd)).toISOString().slice(0, 10) !== ymd) {
     return '正しい日付を入力してください。';
   }
   const diff = Math.round((ymdToUtc_(ymd) - ymdToUtc_(today)) / 86400000);
+  const w = new Date(ymdToUtc_(ymd)).getUTCDay();
   if (diff < 0) return '過去の日付は選択できません。';
+  // 当日が土曜日：時刻や時間帯にかかわらず受け付けない
+  if (diff === 0 && w === 6) return '土曜日は午後が休診のため、当日のご予約は受け付けておりません。別の日を選択してください。';
   if (diff === 0 && (nowHm || '00:00') >= CONFIG.SAME_DAY_CLOSE) {
     return '本日の予約受付は11:00に終了しました。別の日を選択してください。';
   }
   if (diff > CONFIG.MAX_DAYS_AHEAD) return '3か月以内の日付を選択してください。';
-  const w = new Date(ymdToUtc_(ymd)).getUTCDay();
   if (w === 4) return '木曜日は休診日です。別の日を選択してください。';
   if (w === 0) return '日曜日は休診日です。別の日を選択してください。';
   if (w === 6 && time === '午後') return '土曜日の午後は休診です。午前を選択してください。';
@@ -300,7 +303,8 @@ function sendNotification_(id, d) {
     CONFIG.TEST_NOTE,
   ].join('\n');
 
-  const options = { name: CONFIG.CLINIC_NAME + ' Webフォーム' };
+  // htmlBody：同じ文面のHTML版（プレーンテキストだけだと、長い行が文の途中で自動的に折り返されるため）
+  const options = { name: CONFIG.CLINIC_NAME + ' Webフォーム', htmlBody: htmlBody_(body) };
   if (d.email) options.replyTo = d.email;
   MailApp.sendEmail(
     CONFIG.NOTIFY_TO,
@@ -334,14 +338,6 @@ function sendAutoReply_(id, d) {
     '送信後、当院より確認のご連絡をいたします。ご予約の場合は、そのご連絡をもって予約が確定します。',
     'お急ぎの場合は、お電話でご連絡ください。',
     '',
-    '────────────',
-    CONFIG.CLINIC_NAME,
-    '〒123-4567　東京都台東区上野0-0-0',
-    'TEL：' + CONFIG.CLINIC_TEL,
-    '受付時間：午前 8:00〜11:00 ／ 午後 12:00〜17:00',
-    '休診日：木曜・土曜午後・日曜',
-    '────────────',
-    '',
     '※このメールは送信専用です。返信は受け付けておりません。お心当たりのない場合は、お手数ですが破棄してください。',
     '',
     CONFIG.TEST_NOTE + '本番環境では表示されません。',
@@ -351,7 +347,7 @@ function sendAutoReply_(id, d) {
     d.email,
     '【' + CONFIG.CLINIC_NAME + '】ご予約・ご相談を受け付けました（' + id + '）',
     body,
-    { name: CONFIG.CLINIC_NAME }
+    { name: CONFIG.CLINIC_NAME, htmlBody: htmlBody_(body) } // htmlBody：同じ文面のHTML版（長い行の自動の折り返しを防ぐ）
   );
 }
 
@@ -376,6 +372,13 @@ function autoReplyAllowed_(email) {
 
 /* ================= 小さな道具 ================= */
 
+// プレーンテキストの本文を、同じ文面のHTMLにする（特殊文字をエスケープし、改行を <br> にする）
+function htmlBody_(text) {
+  return String(text)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+    .replace(/\r\n?/g, '\n').replace(/\n/g, '<br>');
+}
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }

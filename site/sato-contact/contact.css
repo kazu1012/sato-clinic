@@ -121,6 +121,9 @@ input[type=radio],input[type=checkbox]{width:18px;height:18px;accent-color:var(-
 /* 文節の途中で改行しない（contact.js の P()）。欄より長い文節だけは、はみ出さないよう折り返す */
 .phrased{word-break:keep-all;overflow-wrap:anywhere}
 .field-error,.field-note,.error-summary{text-wrap:pretty}
+/* 見出しの下の案内：文ごとのかたまり（幅が足りないときは「。」の後ろで改行） */
+.web-form>.form-guide{margin-top:16px}
+.form-sentence{display:inline-block;max-width:100%}
 .after-note{max-width:760px;margin:24px auto 0;font-size:14px;color:var(--muted);text-align:left}
 
 /* 送信完了 */
