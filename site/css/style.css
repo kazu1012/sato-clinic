@@ -323,7 +323,8 @@ address { font-style: normal; }
   .hours, .message, .staff, .access { padding-block: 1.5rem; }
   .hours-layout { min-height: 0; }
   .hours-table { margin-top: 1rem; }
-  .hours-table col:first-child { width: 35%; }
+  .hours-table col:first-child { width: 6.625rem; }
+  .hours-table th, .hours-table td { padding-inline: .0625rem; }
   .hours-table thead th { font-size: .9375rem; }
   .hours-table tbody th { font-size: .9375rem; }
   .session-name { display: block; margin: 0; }
