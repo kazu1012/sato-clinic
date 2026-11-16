@@ -1054,6 +1054,7 @@ main > .band--tint:last-child { margin-bottom: 2.5rem; }
 
 /* ---------- フッター：院内システムのご案内へのリンク（全版） ---------- */
 .footer-legal a.footer-staff-link { gap: .35em; font-family: var(--font-heading); font-weight: 700; }
+.footer-legal a.footer-privacy-link { font-weight: 700; }
 .footer-staff-link svg { flex: none; }
 
 /* ---------- フッター：タブレット・スマホは行間を詰める（デスクトップは変えない） ---------- */
