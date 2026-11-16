@@ -109,7 +109,7 @@ test('自動返信：相談者宛てに受付番号つきで届く', () => {
   assert.equal(a.to, 'hanako@example.com');
   assert.equal(a.opt.name, '佐藤医院');
   assert.match(a.subject, /SATO-261112-0001/);
-  assert.match(a.body, /^佐藤 花子 様/);
+  assert.match(a.body, /^佐藤 花子様\n/);
 });
 
 test('メールなし：通知のみ、返信先なし、電話で連絡と案内', () => {
@@ -154,23 +154,60 @@ test('誤った形式：電話・メール・ふりがな・選択肢', () => {
   assert.ok(r.errors.tel && r.errors.email && r.errors.kana && r.errors.type && r.errors.visit);
 });
 
-test('希望日：今日・木曜・日曜・土曜午後・3か月超はエラー、土曜午前はOK', () => {
+test('希望日：過去・木曜・日曜・土曜午後・3か月超はエラー、土曜午前はOK', () => {
   const env = makeEnv();
   const e = (date1, time1 = '午前') => env.post(valid({ date1, time1 })).errors;
-  assert.match(e('2026-11-12').date1, /明日以降/);    // 今日
+  assert.match(e('2026-11-11').date1, /過去の日付は選択できません/); // 昨日
   assert.match(e('2026-11-19').date1, /木曜日/);
   assert.match(e('2026-11-15').date1, /日曜日/);
   assert.match(e('2026-11-14', '午後').date1, /土曜日の午後/);
   assert.match(e('2027-03-01').date1, /3か月以内/);
-  assert.match(e('2026-13-40').date1, /日付を選択/);
+  assert.match(e('2026-13-40').date1, /正しい日付を入力してください/);
   assert.equal(env.post(valid({ date1: '2026-11-14', time1: '午前' })).ok, true);
+});
+
+test('当日の予約：午後のみ・11:00まで（日本時間）。判定は 過去 → 11:00過ぎ → 当日の午前 の順', () => {
+  // 2026-11-13（金）を「今日」とする
+  const at = (hm) => makeEnv({ now: new Date(`2026-11-13T${hm}:00+09:00`) });
+  const before = at('10:59');
+  assert.equal(before.post(valid({ date1: '2026-11-13', time1: '午後' })).ok, true);
+  assert.match(before.post(valid({ date1: '2026-11-13', time1: '午前' })).errors.date1, /^当日のご予約は午後のみ受け付けています。$/);
+  const after = at('11:00');
+  assert.match(after.post(valid({ date1: '2026-11-13', time1: '午後' })).errors.date1, /^本日の予約受付は11:00に終了しました。別の日を選択してください。$/);
+  assert.match(after.post(valid({ date1: '2026-11-13', time1: '午前' })).errors.date1, /11:00に終了/); // 午前より11:00が先
+  assert.match(after.post(valid({ date1: '2026-11-12', time1: '午後' })).errors.date1, /過去の日付/); // 11:00より過去が先
+  // 第2希望にも同じルール
+  assert.match(before.post(valid({ date1: '2026-11-16', date2: '2026-11-13', time2: '午前' })).errors.date2, /午後のみ/);
+});
+
+test('受付確認メール：決まった形で、空の項目は（なし）', () => {
+  const env = makeEnv();
+  env.post(valid({ message: '' }));
+  const a = env.sent[1];
+  assert.equal(a.subject, '【佐藤医院】ご予約・ご相談を受け付けました（SATO-261112-0001）');
+  assert.ok(a.body.includes([
+    '受付番号：SATO-261112-0001',
+    'お名前：佐藤 花子様（ふりがな：さとう はなこ）',
+    '電話番号：090-1234-5678',
+    'メールアドレス：hanako@example.com',
+    'ご希望の内容：予防接種',
+    '初診・再診：初診',
+    '第1希望：2026年11月13日（金） 午前',
+    '第2希望：（なし）',
+    '',
+    '【ご相談内容】',
+    '（なし）',
+  ].join('\n')));
+  assert.match(a.body, /ご予約の場合は、そのご連絡をもって予約が確定します。/);
+  assert.match(a.body, /※このメールは送信専用です。返信は受け付けておりません。/);
+  assert.match(a.body, /本番環境では表示されません。$/);
 });
 
 test('第2希望：時間帯なし・第1希望と同じはエラー', () => {
   const env = makeEnv();
   assert.match(env.post(valid({ date2: '2026-11-16', time2: '' })).errors.date2, /時間帯/);
   assert.match(env.post(valid({ date2: '2026-11-13', time2: '午前' })).errors.date2, /別の日時/);
-  assert.match(env.post(valid({ date2: '', time2: '午後' })).errors.date2, /日付を選択/);
+  assert.match(env.post(valid({ date2: '', time2: '午後' })).errors.date2, /第2希望の日付を選択/);
   assert.equal(env.post(valid({ date2: '2026-11-16', time2: '午後' })).ok, true);
 });
 

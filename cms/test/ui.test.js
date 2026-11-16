@@ -9,6 +9,13 @@ const { createWorld, Spreadsheet } = require('./mock-gas');
 const FORM = process.argv[2];
 const OUT = process.argv[3] || '/tmp/cms-shots';
 const SSID = '1VzX1V6KCbPMUm9Bad5F2D1DA5DxUNMTtX-36LPnniXc';
+
+// 明日以降の、次の診療日（木・日・土を除く。日本時間）
+function nextOpenDay() {
+  const d = new Date(Date.now() + 9 * 3600e3);
+  do { d.setUTCDate(d.getUTCDate() + 1); } while ([0, 4, 6].includes(d.getUTCDay()));
+  return d.toISOString().slice(0, 10);
+}
 fs.mkdirSync(OUT, { recursive: true });
 
 (async () => {
@@ -18,7 +25,7 @@ fs.mkdirSync(OUT, { recursive: true });
   const form = world.makeContext(FORM);
   const admin = world.makeContext(path.join(__dirname, '../admin/Code.gs'));
   form.setup(); admin.setupCms(); form.testSubmit();
-  form.doPost({ parameter: { name: '佐藤 次郎', kana: 'さとう じろう', tel: '03-1234-5678', email: '', type: '一般診療', visit: '再診', date1: '2026-11-16', time1: '午前', message: '', agree: '同意する' } });
+  form.doPost({ parameter: { name: '佐藤 次郎', kana: 'さとう じろう', tel: '03-1234-5678', email: '', type: '一般診療', visit: '再診', date1: nextOpenDay(), time1: '午前', message: '', agree: '同意する' } });
 
   const html = fs.readFileSync(path.join(__dirname, '../admin/index.html'), 'utf8');
   const browser = await chromium.launch();

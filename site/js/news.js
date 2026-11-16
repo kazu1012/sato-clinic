@@ -10,10 +10,9 @@
   }
 
   function createDate(item) {
-    // 初期記事と同じ記事で掲載日が空欄の場合だけ、想定済みの日付を補う。
-    // 院内システムで設定された日付は、そのまま優先する。
-    const original = (window.SATO_NEWS || []).find(news => news.id === item.id && news.title === item.title);
-    const value = item.date || (original && original.date);
+    // 掲載日は任意。院内システムで入力されたときだけ表示する（空なら何も出さない）。
+    // 並び順は日付ではなく、データの並び（掲載順・上ほど新しい）のまま。
+    const value = item.date;
     const label = formatDate(value);
     if (!label) return null;
     const time = document.createElement("time");

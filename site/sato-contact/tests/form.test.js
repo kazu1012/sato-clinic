@@ -56,19 +56,22 @@ test.after(async () => {
   gas?.kill();
 });
 
-// GAS_URL を書き換えた reservation.js を渡す（ファイル自体は変更しない）
-async function openPage({ gasUrl = '', viewport = { width: 1280, height: 900 }, url = FORM_PAGE } = {}) {
+// 日本時間の今日（'YYYY-MM-DD'）
+const tokyoYmd = (d = new Date()) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tokyo' }).format(d);
+
+// GAS_URL を書き換えた reservation.js を渡す（ファイル自体は変更しない。gasUrl が空なら「テスト表示」）
+// now を渡すと、ページの時計をその時刻に止める（当日の予約の確認用）
+async function openPage({ gasUrl = '', viewport = { width: 1280, height: 900 }, url = FORM_PAGE, now } = {}) {
   const page = await browser.newPage({ viewport, locale: 'ja-JP', timezoneId: 'Asia/Tokyo' });
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  if (gasUrl) {
-    await page.route('**/js/reservation.js', async (route) => {
-      const original = fs.readFileSync(FORM_JS, 'utf8');
-      const js = original.replace('const GAS_URL = "";', `const GAS_URL = "${gasUrl}";`);
-      assert.notEqual(js, original, 'reservation.js の GAS_URL の行が見つかりません');
-      await route.fulfill({ contentType: 'text/javascript', body: js });
-    });
-  }
+  if (now) await page.clock.setFixedTime(now);
+  await page.route('**/js/reservation.js', async (route) => {
+    const original = fs.readFileSync(FORM_JS, 'utf8');
+    const js = original.replace(/^const GAS_URL = ".*";$/m, `const GAS_URL = "${gasUrl}";`);
+    assert.match(original, /^const GAS_URL = ".*";$/m, 'reservation.js の GAS_URL の行が見つかりません');
+    await route.fulfill({ contentType: 'text/javascript', body: js });
+  });
   await page.goto(url);
   page.jsErrors = errors;
   return page;
@@ -116,7 +119,7 @@ test('空のまま送信：エラー一覧と各欄のエラーが出る', async
   await summary.waitFor({ state: 'visible' });
   // 名前・ふりがな・電話・内容・初診/再診・第1希望・同意（初診・再診は最初から選んでいない）
   assert.equal(await summary.locator('li').count(), 7);
-  assert.match(await page.textContent('#f-visit-error'), /初診・再診を選択/);
+  assert.match(await page.textContent('#f-visit-error'), /^初診または再診を選択してください。$/);
   assert.equal(await page.getAttribute('#f-name', 'aria-invalid'), 'true');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'f-error-summary');
   await page.screenshot({ path: path.join(SHOTS, 'errors.png'), fullPage: true });
@@ -146,7 +149,7 @@ test('電話番号：英字が混ざっていたらエラー（Code.gs と同じ
   const page = await openPage();
   await page.fill('#f-tel', '090a1234-5678');
   await page.click('#f-name');
-  assert.match(await page.textContent('#f-tel-error'), /0から始まる10〜11桁/);
+  assert.match(await page.textContent('#f-tel-error'), /^電話番号は、0から始まる10桁または11桁の数字で入力してください。$/);
   await page.close();
 });
 
@@ -170,9 +173,47 @@ test('希望日：木曜はエラー、土曜は午後を選べない', async ()
   await page.dispatchEvent('#f-date1', 'change');
   assert.equal(await page.inputValue('#f-time1'), '');
   assert.deepEqual(page.jsErrors, []);
-  // 明日より前は選べないよう min が付いている
-  assert.ok((await page.getAttribute('#f-date1', 'min')) > ymd(new Date()));
+  // カレンダーで選べる最初の日は「今日」（日本時間）
+  assert.equal(await page.getAttribute('#f-date1', 'min'), tokyoYmd());
   await page.close();
+});
+
+test('当日の予約：午後のみ・11:00まで（日本時間）。判定は 過去 → 11:00過ぎ → 当日の午前 の順', async () => {
+  const check = async (page, date, time) => {
+    await page.fill('#f-date1', date);
+    await page.dispatchEvent('#f-date1', 'change');
+    await page.selectOption('#f-time1', time);
+    await page.click('#f-name');
+    return page.textContent('#f-date1-error');
+  };
+  // 2026-11-13（金）10:59
+  const before = await openPage({ now: new Date('2026-11-13T10:59:00+09:00') });
+  assert.equal(await before.getAttribute('#f-date1', 'min'), '2026-11-13');
+  assert.equal(await check(before, '2026-11-13', '午前'), '当日のご予約は午後のみ受け付けています。');
+  assert.equal(await check(before, '2026-11-13', '午後'), '');
+  assert.equal(await check(before, '2026-11-12', '午後'), '過去の日付は選択できません。');
+  await before.close();
+  // 2026-11-13（金）11:00
+  const after = await openPage({ now: new Date('2026-11-13T11:00:00+09:00') });
+  assert.equal(await check(after, '2026-11-13', '午後'), '本日の予約受付は11:00に終了しました。別の日を選択してください。');
+  assert.equal(await check(after, '2026-11-13', '午前'), '本日の予約受付は11:00に終了しました。別の日を選択してください。');
+  assert.deepEqual(after.jsErrors, []);
+  await after.close();
+});
+
+test('文言の改行：スマホ・タブレット・PCで、エラーの文言が欄からはみ出さない', async () => {
+  for (const width of [375, 768, 1440]) {
+    const page = await openPage({ viewport: { width, height: 900 } });
+    await page.fill('#f-tel', '12345');
+    await page.fill('#f-kana', 'Sato');
+    await page.click('#f-name');
+    for (const id of ['#f-tel-error', '#f-kana-error']) {
+      const over = await page.evaluate((sel) => { const p = document.querySelector(sel); return p.scrollWidth - p.clientWidth; }, id);
+      assert.ok(over <= 0, `${width}px：${id} がはみ出しています（${over}px）`);
+    }
+    await page.screenshot({ path: path.join(SHOTS, `errors-${width}.png`), fullPage: true });
+    await page.close();
+  }
 });
 
 test('Google未接続（GAS_URLが空）：完了ページにテスト表示の受付番号が出る', async () => {
@@ -227,15 +268,44 @@ test('サーバー側でエラー：その欄にエラーを表示し、ペー�
   await page.close();
 });
 
-test('通信できない：電話番号つきのお詫びを表示し、もう一度送れる', async () => {
+test('通信できない：「送信できませんでした。」の1行だけを表示し、もう一度送れる', async () => {
   const page = await openPage({ gasUrl: 'http://localhost:1/exec' });
   await fillValid(page);
   await page.click('.submit-button');
   await page.locator('#f-error-summary').waitFor({ state: 'visible' });
-  assert.match(await page.textContent('#f-error-summary'), /送信できませんでした[\s\S]*00-0000-0000/);
+  assert.equal(await page.textContent('#f-error-summary'), '送信できませんでした。');
+  assert.equal(await page.locator('#f-error-summary li').count(), 0);
   assert.equal(await page.isEnabled('.submit-button'), true);
   assert.equal(await page.textContent('.submit-button'), '送信する');
   await page.close();
+});
+
+test('混雑・GASの不具合：3行のお詫び（電話番号はリンク）。送信中のボタンは高さが変わらない', async () => {
+  const cases = [
+    ['現在、送信が混み合っています。', '現在、送信が混み合っています。'],
+    ['送信処理でエラーが発生しました。お手数ですが、お電話でご連絡ください。', '送信処理でエラーが発生しました。'], // 古い Code.gs の文言
+  ];
+  for (const [fromGas, heading] of cases) {
+    const page = await openPage({ gasUrl: 'https://gas.example/exec' });
+    let release;
+    const wait = new Promise((r) => { release = r; });
+    await page.route('https://gas.example/exec', async (route) => {
+      await wait;
+      route.fulfill({ contentType: 'application/json', body: JSON.stringify({ ok: false, errors: { _: fromGas } }) });
+    });
+    await fillValid(page);
+    const height = (await page.locator('.submit-button').boundingBox()).height;
+    await page.click('.submit-button');
+    assert.equal(await page.textContent('.submit-button'), '送信中です。しばらくお待ちください。');
+    assert.equal((await page.locator('.submit-button').boundingBox()).height, height, '送信中にボタンの高さが変わりました');
+    release();
+    await page.locator('#f-error-summary').waitFor({ state: 'visible' });
+    assert.equal(await page.textContent('#f-error-summary > p'), heading);
+    const items = await page.locator('#f-error-summary li').allTextContents();
+    assert.deepEqual(items, ['時間をおいて、もう一度お試しください。', 'お急ぎの場合は、お電話（00-0000-0000）でご連絡ください。']);
+    assert.equal(await page.getAttribute('#f-error-summary li a', 'href'), 'tel:0000000000');
+    await page.close();
+  }
 });
 
 test('完了ページ：受付番号がない・形が違うときは表示しない', async () => {

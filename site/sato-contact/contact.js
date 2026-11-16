@@ -16,13 +16,50 @@ const GAS_URL = '';
   const submitBtn = document.getElementById('submit-btn');
   const complete = document.getElementById('complete');
 
-  // ---------- 日付まわり ----------
-  const pad = (n) => String(n).padStart(2, '0');
-  const toYmd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
-  const today = new Date();
-  const MIN_DATE = toYmd(addDays(today, 1));   // 明日から
-  const MAX_DATE = toYmd(addDays(today, 90));  // 3か月先まで
+  // ---------- 改行の位置（文節の途中で切らない。js/reservation.js と同じしくみ） ----------
+  const PHRASES = new Map();
+  const P = (...parts) => { const text = parts.join(''); PHRASES.set(text, parts); return text; };
+  function phrased(text) {
+    const parts = PHRASES.get(text);
+    if (!parts) return document.createTextNode(text);
+    const span = document.createElement('span');
+    span.className = 'phrased';
+    parts.forEach((part, i) => { if (i) span.append(document.createElement('wbr')); span.append(part); });
+    return span;
+  }
+  const MSG = {
+    kana: P('ふりがなは', 'ひらがなで', '入力してください。'),
+    tel: P('電話番号は、', '0から始まる', '10桁または11桁の', '数字で', '入力してください。'),
+    visit: P('初診または', '再診を', '選択してください。'),
+    badDate: P('正しい', '日付を', '入力してください。'),
+    past: P('過去の', '日付は', '選択できません。'),
+    closed: P('本日の', '予約受付は', '11:00に', '終了しました。', '別の日を', '選択してください。'),
+    pmOnly: P('当日の', 'ご予約は', '午後のみ', '受け付けています。'),
+    agree: P('個人情報の', '取り扱いに', '同意してください。'),
+    offline: P('送信できませんでした。'),
+    busy: P('現在、', '送信が', '混み合っています。'),
+    gasError: P('送信処理で', 'エラーが', '発生しました。'),
+    retry: P('時間をおいて、', 'もう一度', 'お試しください。'),
+  };
+  const SENDING = ['送信中です。', 'しばらくお待ちください。'];
+
+  // ---------- 日付まわり（「今日」と「今の時刻」は日本時間で判定する） ----------
+  const SAME_DAY_CLOSE = '11:00'; // 当日の予約受付の締め切り（Code.gs の CONFIG.SAME_DAY_CLOSE と同じ）
+  const tokyoFormat = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Tokyo', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+  });
+  function tokyoNow() {
+    const p = {};
+    tokyoFormat.formatToParts(new Date()).forEach(({ type, value }) => { p[type] = value; });
+    return { ymd: `${p.year}-${p.month}-${p.day}`, hm: `${p.hour}:${p.minute}` };
+  }
+  const addDaysYmd = (ymd, n) => {
+    const [y, m, d] = ymd.split('-').map(Number);
+    return new Date(Date.UTC(y, m - 1, d + n)).toISOString().slice(0, 10);
+  };
+  const TODAY = tokyoNow().ymd;
+  const MIN_DATE = TODAY;                  // 今日から（当日は午後のみ・11:00まで）
+  const MAX_DATE = addDaysYmd(TODAY, 90);  // 3か月先まで
   ['date1', 'date2'].forEach((id) => {
     form[id].min = MIN_DATE;
     form[id].max = MAX_DATE;
@@ -35,16 +72,21 @@ const GAS_URL = '';
   }
 
   // 希望日のチェック（Code.gs の checkDate_ と同じルール）
+  // 当日の判定の順：過去の日付 → 11:00を過ぎている → 当日の午前
   function checkDate(ymd, time) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return '日付を選択してください。';
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd)) return MSG.badDate;
     const [y, m, d] = ymd.split('-').map(Number);
-    if (new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10) !== ymd) return '日付を選択してください。';
-    if (ymd < MIN_DATE) return '明日以降の日付を選択してください。';
+    if (new Date(Date.UTC(y, m - 1, d)).toISOString().slice(0, 10) !== ymd) return MSG.badDate;
+    const now = tokyoNow();
+    if (ymd < now.ymd) return MSG.past;
+    const isToday = ymd === now.ymd;
+    if (isToday && now.hm >= SAME_DAY_CLOSE) return MSG.closed;
     if (ymd > MAX_DATE) return '3か月以内の日付を選択してください。';
     const w = weekday(ymd);
     if (w === 4) return '木曜日は休診日です。別の日を選択してください。';
     if (w === 0) return '日曜日は休診日です。別の日を選択してください。';
     if (w === 6 && time === '午後') return '土曜日の午後は休診です。午前を選択してください。';
+    if (isToday && time === '午前') return MSG.pmOnly;
     return '';
   }
 
@@ -75,13 +117,13 @@ const GAS_URL = '';
     kana: (v) => {
       const s = kataToHira(v.trim());
       if (!s) return 'ふりがなを入力してください。';
-      if (!/^[ぁ-ゖー\s　]+$/.test(s)) return 'ふりがなは、ひらがなで入力してください。';
+      if (!/^[ぁ-ゖー\s　]+$/.test(s)) return MSG.kana;
       return '';
     },
     tel: (v) => {
       const digits = toHalfWidth(v).replace(/[^0-9]/g, '');
       if (!v.trim()) return '電話番号を入力してください。';
-      if (!/^0\d{9,10}$/.test(digits)) return '電話番号は、0から始まる10〜11桁の数字で入力してください。';
+      if (!/^0\d{9,10}$/.test(digits)) return MSG.tel;
       return '';
     },
     email: (v) => {
@@ -90,7 +132,7 @@ const GAS_URL = '';
       return '';
     },
     type: (v) => (!v ? 'ご希望の内容を選択してください。' : ''),
-    visit: (v) => (!v ? '初診・再診を選択してください。' : ''),
+    visit: (v) => (!v ? MSG.visit : ''),
     date1: () => {
       if (!form.date1.value) return '第1希望の日付を選択してください。';
       const e = checkDate(form.date1.value, form.time1.value);
@@ -109,7 +151,7 @@ const GAS_URL = '';
       return '';
     },
     message: (v) => (v.length > 1000 ? 'ご相談内容は1000文字以内で入力してください。' : ''),
-    agree: () => (!form.agree.checked ? '個人情報の取り扱いへの同意が必要です。' : ''),
+    agree: () => (!form.agree.checked ? MSG.agree : ''),
   };
   const LABELS = {
     name: 'お名前', kana: 'ふりがな', tel: '電話番号', email: 'メールアドレス', type: 'ご希望の内容',
@@ -126,7 +168,7 @@ const GAS_URL = '';
 
   function showError(key, msg) {
     const box = document.getElementById(`${key}-error`);
-    if (box) box.textContent = msg;
+    if (box) box.replaceChildren(...(msg ? [phrased(msg)] : []));
     (TARGETS[key] || [key]).forEach((id) => {
       const el = form[id];
       if (!el) return;
@@ -157,12 +199,20 @@ const GAS_URL = '';
   function showSummary(errors) {
     const keys = Object.keys(errors);
     if (!keys.length) { summary.hidden = true; summary.innerHTML = ''; return; }
-    const items = keys.map((k) => {
+    const heading = document.createElement('p');
+    heading.textContent = `入力内容をご確認ください（${keys.length}件）`;
+    const list = document.createElement('ul');
+    keys.forEach((k) => {
       const target = focusTargetOf(k);
-      const id = target ? target.id : '';
-      return `<li><a href="#${id}" data-key="${k}">${LABELS[k] || ''}：${escapeHtml(errors[k])}</a></li>`;
-    }).join('');
-    summary.innerHTML = `<p>入力内容をご確認ください（${keys.length}件）</p><ul>${items}</ul>`;
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `#${target ? target.id : ''}`;
+      a.dataset.key = k;
+      a.append(`${LABELS[k] || ''}：`, phrased(errors[k]));
+      li.append(a);
+      list.append(li);
+    });
+    summary.replaceChildren(heading, list);
     summary.hidden = false;
     summary.focus();
   }
@@ -173,10 +223,6 @@ const GAS_URL = '';
     const el = focusTargetOf(a.dataset.key);
     if (el) { el.focus(); el.scrollIntoView({ block: 'center' }); }
   });
-
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  }
 
   // 入力し終えた欄だけをその場でチェック（入力途中で赤くしない）
   const touched = new Set();
@@ -195,7 +241,6 @@ const GAS_URL = '';
   });
   form.addEventListener('input', (ev) => {
     const key = keyOf(ev.target.name || ev.target.id);
-    if (key === 'message') updateCount();
     // すでにエラー表示中の欄は、直ったらすぐ消す
     const box = document.getElementById(`${key}-error`);
     if (box && box.textContent) validateField(key);
@@ -221,8 +266,6 @@ const GAS_URL = '';
   function updateSelectColor(sel) { sel.classList.toggle('is-empty', !sel.value); }
   form.querySelectorAll('select').forEach(updateSelectColor);
 
-  const counter = document.getElementById('message-count');
-  function updateCount() { counter.textContent = `${form.message.value.length} / 1000文字`; }
 
   // ---------- メニュー（スマートフォン） ----------
   const toggle = document.querySelector('.menu-toggle');
@@ -252,7 +295,12 @@ const GAS_URL = '';
 
     sending = true;
     submitBtn.disabled = true;
-    submitBtn.textContent = '送信中…';
+    submitBtn.classList.add('is-sending');
+    submitBtn.replaceChildren(...SENDING.map((line) => {
+      const span = document.createElement('span');
+      span.textContent = line;
+      return span;
+    }));
 
     try {
       const body = new URLSearchParams(new FormData(form));
@@ -263,8 +311,8 @@ const GAS_URL = '';
         result = { ok: true, id: 'TEST-000000', demo: true };
       } else {
         // Content-Typeを指定しない（＝単純なリクエスト）ことで、Apps Scriptに送れる
-        const res = await fetch(GAS_URL, { method: 'POST', body });
-        result = await res.json();
+        const res = await fetch(GAS_URL, { method: 'POST', body }); // 届かなければ catch へ（通信の不具合）
+        result = await res.json().catch(() => null);               // 返事が読めなければ null（GAS の不具合）
       }
 
       if (result && result.ok) {
@@ -273,25 +321,50 @@ const GAS_URL = '';
         Object.entries(result.errors).forEach(([k, msg]) => showError(k, msg));
         const known = Object.fromEntries(Object.entries(result.errors).filter(([k]) => RULES[k]));
         if (Object.keys(known).length) showSummary(known);
-        else showFailure(result.errors._ || result.errors[Object.keys(result.errors)[0]]);
+        else showServerFailure(result.errors._ || result.errors[Object.keys(result.errors)[0]]);
       } else {
-        showFailure();
+        showServerFailure();
       }
     } catch (err) {
       console.error(err);
-      showFailure();
+      showFailure(MSG.offline, false);
     } finally {
       sending = false;
       submitBtn.disabled = false;
+      submitBtn.classList.remove('is-sending');
       submitBtn.textContent = '送信する';
     }
   });
 
-  function showFailure(msg) {
-    summary.innerHTML = `<p>${escapeHtml(msg || '送信できませんでした。')}</p>`
-      + '<ul><li>時間をおいて、もう一度お試しください。</li><li>お急ぎの場合は、お電話（<a href="tel:0000000000">00-0000-0000</a>）でご連絡ください。</li></ul>';
+  // 送信できなかったとき：通信の不具合は1行だけ、混雑・GASの不具合は3行（電話番号はリンク）
+  function showFailure(msg, withHelp) {
+    const heading = document.createElement('p');
+    heading.append(phrased(msg));
+    summary.replaceChildren(heading);
+    if (withHelp) {
+      const list = document.createElement('ul');
+      const retry = document.createElement('li');
+      retry.append(phrased(MSG.retry));
+      const tel = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = 'tel:0000000000';
+      link.className = 'nowrap';
+      link.textContent = '00-0000-0000';
+      const line = document.createElement('span');
+      line.className = 'phrased';
+      line.append('お急ぎの', document.createElement('wbr'), '場合は、', document.createElement('wbr'),
+        'お電話（', link, '）で', document.createElement('wbr'), 'ご連絡ください。');
+      tel.append(line);
+      list.append(retry, tel);
+      summary.append(list);
+    }
     summary.hidden = false;
     summary.focus();
+  }
+  // Code.gs からの「_」の文言は、最初の1文を1行目にする
+  function showServerFailure(msg) {
+    const first = (String(msg || '').match(/^[^。]*。/) || [''])[0];
+    showFailure(first || MSG.gasError, true);
   }
 
   function showComplete(result) {

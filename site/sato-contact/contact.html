@@ -86,7 +86,7 @@
           <label class="form-label" for="email">メールアドレス</label>
           <div class="form-field">
             <input type="email" id="email" name="email" placeholder="例）sample@example.com" autocomplete="email" inputmode="email" maxlength="254" aria-describedby="email-note email-error">
-            <p class="field-note" id="email-note">ご入力いただくと、受付確認のメールをお送りします。</p>
+            <p class="field-note" id="email-note"><span class="phrased">メールアドレスを<wbr>ご入力いただくと、<wbr>受付確認メールを<wbr>お送りします。</span></p>
             <p class="field-error" id="email-error"></p>
           </div>
         </div>
@@ -159,8 +159,7 @@
         <div class="form-row">
           <label class="form-label" for="message">ご相談内容</label>
           <div class="form-field">
-            <textarea id="message" name="message" rows="5" maxlength="1000" placeholder="症状やご相談内容をご記入ください" aria-describedby="message-count message-error"></textarea>
-            <p class="field-note count" id="message-count" aria-live="polite">0 / 1000文字</p>
+            <textarea id="message" name="message" rows="5" maxlength="1000" placeholder="症状やご相談内容をご記入ください" aria-describedby="message-error"></textarea>
             <p class="field-error" id="message-error"></p>
           </div>
         </div>

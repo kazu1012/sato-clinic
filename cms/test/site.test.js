@@ -44,6 +44,18 @@ const SSID = '1VzX1V6KCbPMUm9Bad5F2D1DA5DxUNMTtX-36LPnniXc';
   const topDown = await open('index.html', 'down');
   assert.deepEqual(await text(top, '[data-faq-top] li'), await text(topDown, '[data-faq-top] li'));
   assert.deepEqual(await text(top, '[data-news-list] li'), await text(topDown, '[data-news-list] li'));
+  // 掲載日は入力したときだけ表示（初期データは空なので出ない）。並びは掲載順（上ほど新しい）で、トップと一覧は同じ順
+  const ORDER = ['インフルエンザ予防接種について', '年末年始の休診について', '健康診断のご案内', '新型コロナウイルス対策について', 'オンライン診療の導入について'];
+  for (const p of [top, topDown]) {
+    assert.equal(await p.locator('[data-news-list] time').count(), 0);
+    assert.deepEqual(await text(p, '[data-news-list] li'), ORDER);
+  }
+  for (const mode of ['live', 'down']) {
+    const list = await open('news.html', mode);
+    assert.equal(await list.locator('.news-entry time').count(), 0);
+    assert.deepEqual(await text(list, '.news-entry h2'), ORDER);
+    assert.ok((await text(list, '#news-2 p'))[0].includes('12月29日（月）〜1月4日（日）となります。年始は1月5日（月）より'));
+  }
   console.log('ok 初期データでは見た目が変わらない');
 
   // 2) 院内システムで変えると、サイトに出る

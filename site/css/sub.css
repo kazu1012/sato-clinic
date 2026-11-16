@@ -278,6 +278,18 @@ img.photo--director { object-position: 9% 30%; }
 /* 迷惑送信よけの欄（人には見えない・読み上げない） */
 .form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .submit-button:disabled { background: var(--color-muted); cursor: wait; }
+
+/* ---------- 2026-11 フォームの文言の改行（文節の途中で切らない・1〜2文字だけ次の行に落とさない） ---------- */
+/* .phrased：文節の間に <wbr> を入れた文言（js/reservation.js の P()）。文節の途中では改行しない。
+   1つの文節が欄より長いとき（ごく狭い画面）だけは、はみ出さないように途中で折り返す */
+.phrased { word-break: keep-all; overflow-wrap: anywhere; }
+.form-error, .form-note, .form-error-summary { text-wrap: pretty; }
+/* メールアドレス欄の下の案内文 */
+.form-note { margin-top: .5rem; color: var(--color-muted); font-size: .9375rem; line-height: 1.6; }
+/* 送信中のボタン：「送信中です。」「しばらくお待ちください。」の間（「。」の後ろ）でだけ改行する。
+   2行でも、ボタンの高さ（min-height: 3.625rem）の中に収まる行の高さにして、画面がガタつかないようにする */
+.submit-button.is-sending { flex-wrap: wrap; align-content: center; line-height: 1.35; }
+.submit-button.is-sending > span { white-space: nowrap; }
 /* 送信完了ページの受付番号 */
 .complete-receipt { max-width: 55rem; margin: 1.5rem auto 0; font-size: 1.125rem; font-weight: 700; }
 .complete-receipt strong { color: var(--color-brand-strong); font: 700 1.375rem/1.4 var(--font-heading); letter-spacing: .06em; overflow-wrap: anywhere; }

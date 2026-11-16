@@ -24,6 +24,7 @@ const CONFIG = {
   MAX_PER_HOUR: 30,               // 1時間に受け付ける最大件数（いたずら・連打よけ）
   AUTO_REPLY_COOLDOWN_SEC: 600,   // 同じアドレスへの自動返信は10分に1回まで
   MAX_DAYS_AHEAD: 92,             // 何日先まで予約希望を受け付けるか（フォームは90日）
+  SAME_DAY_CLOSE: '11:00',         // 当日の予約受付の締め切り（日本時間。この時刻からは当日を受け付けない）
   TEST_NOTE: '※このメールは、教材用の架空の医院「佐藤医院」のフォームから送信されたテストです。',
 };
 
@@ -45,11 +46,11 @@ function doPost(e) {
     // 迷惑送信よけ：人には見えない欄に入力があったら、受け付けたふりをして何もしない
     if (p.website) return json_({ ok: true, id: 'OK' });
 
-    const v = validate_(p, todayYmd_());
+    const v = validate_(p, todayYmd_(), nowHm_());
     if (!v.ok) return json_({ ok: false, errors: v.errors });
 
     if (!underRateLimit_()) {
-      return json_({ ok: false, errors: { _: '現在、送信が混み合っています。時間をおいてお試しいただくか、お電話でご連絡ください。' } });
+      return json_({ ok: false, errors: { _: '現在、送信が混み合っています。' } });
     }
 
     const data = v.data;
@@ -69,7 +70,7 @@ function doPost(e) {
     return json_({ ok: true, id: id });
   } catch (err) {
     console.error(err && err.stack ? err.stack : err);
-    return json_({ ok: false, errors: { _: '送信処理でエラーが発生しました。お手数ですが、お電話でご連絡ください。' } });
+    return json_({ ok: false, errors: { _: '送信処理でエラーが発生しました。' } });
   }
 }
 
@@ -128,9 +129,9 @@ function publicFaq_() {
   }));
 }
 
-/* ================= 入力チェック（contact.js と同じルール） ================= */
+/* ================= 入力チェック（js/reservation.js・contact.js と同じルール） ================= */
 
-function validate_(p, today) {
+function validate_(p, today, nowHm) {
   const errors = {};
   const s = (k) => oneLine_(String(p[k] == null ? '' : p[k]));
 
@@ -149,12 +150,12 @@ function validate_(p, today) {
   else if (name.length > 50) errors.name = 'お名前は50文字以内で入力してください。';
 
   if (!kana) errors.kana = 'ふりがなを入力してください。';
-  else if (!/^[ぁ-ゖー\s　]+$/.test(kana)) errors.kana = 'ふりがなは、ひらがなで入力してください。';
+  else if (!/^[ぁ-ゖー\s　]+$/.test(kana)) errors.kana = 'ふりがなはひらがなで入力してください。';
   else if (kana.length > 50) errors.kana = 'ふりがなは50文字以内で入力してください。';
 
   if (!tel) errors.tel = '電話番号を入力してください。';
   else if (!/^0\d{9,10}$/.test(tel.replace(/[^0-9]/g, '')) || !/^[0-9\-()]+$/.test(tel)) {
-    errors.tel = '電話番号は、0から始まる10〜11桁の数字で入力してください。';
+    errors.tel = '電話番号は、0から始まる10桁または11桁の数字で入力してください。';
   }
 
   if (email && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254)) {
@@ -162,11 +163,11 @@ function validate_(p, today) {
   }
 
   if (TYPES.indexOf(type) < 0) errors.type = 'ご希望の内容を選択してください。';
-  if (VISITS.indexOf(visit) < 0) errors.visit = '初診・再診を選択してください。';
+  if (VISITS.indexOf(visit) < 0) errors.visit = '初診または再診を選択してください。';
 
   if (!date1) errors.date1 = '第1希望の日付を選択してください。';
   else {
-    const e1 = checkDate_(date1, time1, today);
+    const e1 = checkDate_(date1, time1, today, nowHm);
     if (e1) errors.date1 = e1;
     else if (TIMES.indexOf(time1) < 0) errors.date1 = '第1希望の時間帯（午前／午後）を選択してください。';
   }
@@ -174,7 +175,7 @@ function validate_(p, today) {
   if (date2 || time2) {
     if (!date2) errors.date2 = '第2希望の日付を選択してください。';
     else {
-      const e2 = checkDate_(date2, time2, today);
+      const e2 = checkDate_(date2, time2, today, nowHm);
       if (e2) errors.date2 = e2;
       else if (TIMES.indexOf(time2) < 0) errors.date2 = '第2希望の時間帯（午前／午後）を選択してください。';
       else if (date2 === date1 && time2 === time1) errors.date2 = '第1希望と別の日時を選択してください。';
@@ -182,7 +183,7 @@ function validate_(p, today) {
   }
 
   if (message.length > 1000) errors.message = 'ご相談内容は1000文字以内で入力してください。';
-  if (!agree) errors.agree = '個人情報の取り扱いへの同意が必要です。';
+  if (!agree) errors.agree = '個人情報の取り扱いに同意してください。';
 
   if (Object.keys(errors).length) return { ok: false, errors: errors };
   return {
@@ -194,19 +195,25 @@ function validate_(p, today) {
   };
 }
 
-// 希望日のルール：明日以降・木曜と日曜は休診・土曜は午前のみ
-function checkDate_(ymd, time, today) {
+// 希望日のルール：今日から・当日は午後のみで受付は11:00まで・木曜と日曜は休診・土曜は午前のみ
+// today は日本時間の 'YYYY-MM-DD'、nowHm は日本時間の 'HH:mm'（省略時は 00:00 とみなす）
+// 当日の判定の順：過去の日付 → 11:00を過ぎている → 当日の午前（js/reservation.js の checkDate と同じ）
+function checkDate_(ymd, time, today, nowHm) {
   // 13月40日のような、ありえない日付もはじく
   if (!/^\d{4}-\d{2}-\d{2}$/.test(ymd) || new Date(ymdToUtc_(ymd)).toISOString().slice(0, 10) !== ymd) {
-    return '日付を選択してください。';
+    return '正しい日付を入力してください。';
   }
   const diff = Math.round((ymdToUtc_(ymd) - ymdToUtc_(today)) / 86400000);
-  if (diff < 1) return '明日以降の日付を選択してください。';
+  if (diff < 0) return '過去の日付は選択できません。';
+  if (diff === 0 && (nowHm || '00:00') >= CONFIG.SAME_DAY_CLOSE) {
+    return '本日の予約受付は11:00に終了しました。別の日を選択してください。';
+  }
   if (diff > CONFIG.MAX_DAYS_AHEAD) return '3か月以内の日付を選択してください。';
   const w = new Date(ymdToUtc_(ymd)).getUTCDay();
   if (w === 4) return '木曜日は休診日です。別の日を選択してください。';
   if (w === 0) return '日曜日は休診日です。別の日を選択してください。';
   if (w === 6 && time === '午後') return '土曜日の午後は休診です。午前を選択してください。';
+  if (diff === 0 && time === '午前') return '当日のご予約は午後のみ受け付けています。';
   return '';
 }
 
@@ -303,16 +310,28 @@ function sendNotification_(id, d) {
   );
 }
 
+// 患者様への受付確認メール（第2希望・ご相談内容が空なら「（なし）」）
 function sendAutoReply_(id, d) {
+  const date = (ymd, t) => (ymd ? formatJpDate_(ymd) + ' ' + t : '（なし）');
   const body = [
-    d.name + ' 様',
+    d.name + '様',
     '',
     'このたびは' + CONFIG.CLINIC_NAME + 'にご予約・ご相談をいただき、ありがとうございます。',
     '以下の内容で受け付けました。',
     '',
-    summaryText_(id, d),
+    '受付番号：' + id,
+    'お名前：' + d.name + '様（ふりがな：' + d.kana + '）',
+    '電話番号：' + d.tel,
+    'メールアドレス：' + d.email,
+    'ご希望の内容：' + d.type,
+    '初診・再診：' + d.visit,
+    '第1希望：' + date(d.date1, d.time1),
+    '第2希望：' + date(d.date2, d.time2),
     '',
-    '送信後、当院より確認のご連絡をいたします。ご連絡をもってご予約の確定となります。',
+    '【ご相談内容】',
+    d.message || '（なし）',
+    '',
+    '送信後、当院より確認のご連絡をいたします。ご予約の場合は、そのご連絡をもって予約が確定します。',
     'お急ぎの場合は、お電話でご連絡ください。',
     '',
     '────────────',
@@ -322,8 +341,10 @@ function sendAutoReply_(id, d) {
     '受付時間：午前 8:00〜11:00 ／ 午後 12:00〜17:00',
     '休診日：木曜・土曜午後・日曜',
     '────────────',
-    '※このメールは送信専用の自動送信です。お心当たりのない場合は、お手数ですが破棄してください。',
-    CONFIG.TEST_NOTE,
+    '',
+    '※このメールは送信専用です。返信は受け付けておりません。お心当たりのない場合は、お手数ですが破棄してください。',
+    '',
+    CONFIG.TEST_NOTE + '本番環境では表示されません。',
   ].join('\n');
 
   MailApp.sendEmail(
@@ -357,6 +378,9 @@ function autoReplyAllowed_(email) {
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+function nowHm_() {
+  return Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'HH:mm');
 }
 function todayYmd_() {
   return Utilities.formatDate(new Date(), CONFIG.TIMEZONE, 'yyyy-MM-dd');
